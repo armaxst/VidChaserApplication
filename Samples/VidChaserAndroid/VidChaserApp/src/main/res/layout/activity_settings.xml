@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 Maxst, Inc. All Rights Reserved.
+  -->
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/activity_main"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="20dp"
+	android:orientation="horizontal">
+
+	<RadioGroup
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Camera Resolution"/>
+
+		<RadioButton
+			android:id="@+id/sd_resolution"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="640x480" />
+
+		<RadioButton
+			android:id="@+id/hd_resolution"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="1280x720" />
+
+		<RadioButton
+			android:id="@+id/full_hd_resolution"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="1920x1080" />
+	</RadioGroup>
+
+	<RadioGroup
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_marginLeft="30dp"
+		android:orientation="vertical">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Image save format"/>
+
+		<RadioButton
+			android:id="@+id/image_yuv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="YUV" />
+
+		<RadioButton
+			android:id="@+id/image_rgb888"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="RGB888" />
+
+		<RadioButton
+			android:id="@+id/image_rgba8888"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="RGBA8888" />
+	</RadioGroup>
+
+
+</LinearLayout>

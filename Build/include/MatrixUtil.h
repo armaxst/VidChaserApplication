@@ -54,21 +54,6 @@ public:
 		}
 	}
 
-	static void GetInitialModelMatrix(
-		float glX, float glY, float objectWidth, float objectHeight, Matrix44F & modelMatrix44F)
-	{
-		//modelMatrix44F.Scale(objectWidth, objectHeight, 0.0f);
-		modelMatrix44F.Translate(glX, glY, 0.0f);
-		//GLUtil::GLScale(modelMatrix, glWidth, glHeight, 0.0f);
-		//GLUtil::GLTranslate(modelMatrix, glX, glY, 0.0f);
-
-		//float* modelMatrixPointer = &modelMatrix.m[0][0];
-		//for (int i = 0; i < 16; i++)
-		//{
-		//	resultModelMatrix4x4[i] = modelMatrixPointer[i];
-		//}
-	}
-
 	static void LookAt(Matrix44F &result, float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ)
 	{
 		// See the OpenGL GLUT documentation for gluLookAt for a description
@@ -152,53 +137,6 @@ public:
 		result = ortho * result;
 	}
 
-	static void GetVPMatrix(
-		int surfaceWidth, int surfaceHeight, Matrix44F & vpMatrix44F)
-	{
-		Matrix44F viewMatrix, projectionMatrix;
-		LookAt(viewMatrix, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-		projectionMatrix.SetIdentity();
-		Ortho(projectionMatrix,
-			-surfaceWidth / 2, surfaceWidth / 2,
-			-surfaceHeight / 2, surfaceHeight / 2, -100.0f, 100.0f);
-
-		Matrix44F tempVPMatrix = projectionMatrix * viewMatrix;
-		memcpy(&vpMatrix44F, &tempVPMatrix, sizeof(Matrix44F));
-	}
-
-	static void GetVPMatrix(
-		int surfaceWidth, int surfaceHeight, int imageWidth, int imageHeight, Matrix44F & vpMatrix44F)
-	{
-		float widthRatio = (float)surfaceWidth / imageWidth;
-		float heightRatio = (float)surfaceHeight / imageHeight;
-
-		float projectionWidth = imageWidth / 2.0f;
-		float projectionHeight = imageHeight / 2.0f;
-
-		//reduce projection frustum area for keep frame aspect ratio
-		if (widthRatio > heightRatio)
-		{
-			projectionHeight = surfaceHeight / (widthRatio * 2.0f);
-		}
-		else
-		{
-			projectionWidth = surfaceWidth / (heightRatio * 2.0f);
-		}
-
-		Matrix44F viewMatrix, projectionMatrix;
-		viewMatrix.SetIdentity();
-		LookAt(viewMatrix, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-		projectionMatrix.SetIdentity();
-		Ortho(projectionMatrix,
-			-projectionWidth, projectionWidth,
-			-projectionHeight, projectionHeight, -100.0f, 100.0f);
-
-		Matrix44F tempVPMatrix = projectionMatrix * viewMatrix;
-		memcpy(&vpMatrix44F, &tempVPMatrix, sizeof(Matrix44F));
-	}
-
 	static void Matrix44FMultiply(Matrix44F &result, const Matrix44F &srcA, const Matrix44F &srcB)
 	{
 		Matrix44F tmp;
@@ -255,7 +193,7 @@ public:
 	}
 
 	static void GetTransformMatrix44F(
-		int imageWidth, int imageHeight, Matrix44F & vpMatrix44F,
+		int imageWidth, int imageHeight, /*Matrix44F & vpMatrix44F,*/
 		Matrix44F & transformMatrix44F, Matrix33F transformMatrix33F,
 		Matrix44F & mvpMatrix44F)
 	{

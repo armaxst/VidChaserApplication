@@ -5,6 +5,9 @@
 
 #include "ShaderUtil.h"
 #include <MatrixUtil.h>
+#include <map>
+
+using namespace std;
 
 namespace Renderer
 {
@@ -14,17 +17,24 @@ namespace Renderer
 		Sticker();
 		~Sticker();
 
-		void init(int textureWidth, int textureHeight, unsigned char * rgba32TextureData);
-		void draw();
-		void setScale(float x, float y, float z = 1.0f);
+		void init();
+		void setTexture(int textureWidth, int textureHeight, unsigned char * rgba32TextureData);
+		void draw(int imageIndex);
+		void reset();
+        int getTrackableId();
+        void startTracking(int imageIndex, int touchX, int touchY);
+        void setScale(float x, float y, float z = 1.0f);
 		void setTranslate(float x, float y, float z = 1.0f);
 		void setRotation(float angle, float x, float y, float z);
-		void applyTransform(Matrix44F & transform);
-        void setVPMatrix(Matrix44F & vp);
-        void setTimeStamp(long &time);
-        long getTimeStamp();
-
+        void setTransform(int imageIndex, Matrix44F& transform);
+		bool isTouched(int touchX, int touchY);
+        void stopTracking();
+        
 	private:
+		void initGL();
+
+		bool initDone = false;
+
 		GLuint glProgram;
 		GLuint positionHandle;
 		GLuint textureHandle;
@@ -32,15 +42,25 @@ namespace Renderer
 		GLuint mvpMatrixHandle;
 		GLuint textureNames;
 
+        int trackableId = -1;
+        int imageCoordX = 0;
+        int imageCoordY = 0;
+        int lastIndex = -1;
+        
+        unsigned char * textureData = nullptr;
+		int textureWidth;
+		int textureHeight;
+
 		float * vertexBuff;
 		unsigned char *indexBuff;
 		float *textureCoordBuff;
 
-		Matrix44F modelMatrix;
-		Matrix44F mvpMatrix;
-		Matrix44F transformMatrix;
-        Matrix44F vpMatrix;
-        
-        long timeStamp;
+		Matrix44F translation;
+		Matrix44F scale;
+		Matrix44F rotation;
+
+        map<int, Matrix44F> transformMatrixRecords;
+		float minX, minY;
+		float maxX, maxY;
 	};
 }

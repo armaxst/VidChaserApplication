@@ -8,6 +8,7 @@
 
 #include "VidChaserResultCode.h"
 #include "VidChaserDefine.h"
+#include <string>
 
 namespace VidChaser {
 	/*
@@ -16,6 +17,9 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API char* getEngineVersion();
 
+    
+    VIDCHASER_API void init(std::string signature);
+    
 	/*
 	* @brief create Engine.
 	* @return result code.

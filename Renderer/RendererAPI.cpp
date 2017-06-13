@@ -16,9 +16,9 @@ namespace Renderer
 		RenderManager::getInstance()->updateRendering(width, height);
 	}
 
-	void draw(long timeStamp)
+	void draw(int imageIndex)
 	{
-		RenderManager::getInstance()->draw(timeStamp);
+		RenderManager::getInstance()->draw(imageIndex);
 	}
 
 	void deinit()
@@ -36,8 +36,13 @@ namespace Renderer
         RenderManager::getInstance()->addSticker(sticker);
     }
     
-    void setTransformMatrix(int idx, long timeStamp, Matrix44F & matrix)
+    void removeSticker(Sticker *sticker)
     {
-        RenderManager::getInstance()->setTransformMatrix(idx, timeStamp, matrix);
+        RenderManager::getInstance()->removeSticker(sticker);
     }
+    
+	Sticker * getTouchedSticker(int touchX, int touchY)
+	{
+		return RenderManager::getInstance()->getTouchedSticker(touchX, touchY);
+	}
 }

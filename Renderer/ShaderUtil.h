@@ -7,7 +7,7 @@
 #include <android/log.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#elif __iOS__
+#elif __IOS__
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 #elif _WIN32

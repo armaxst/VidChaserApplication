@@ -2,11 +2,22 @@
 * Copyright 2017 Maxst, Inc. All Rights Reserved.
 */
 #include "Sticker.h"
+#include "ProjectionMatrix.h"
+#include "Logger.h"
+
+#ifdef __IOS__
+#include <VidChaserEngine/VidChaserAPI.h>
+#include <VidChaserEngine/CoordiCvtUtil.h>
+#else
+#include <VidChaserAPI.h>
+#include <CoordiCvtUtil.h>
+#endif
 
 #include <iostream>
 
 using namespace std;
 
+#define STICKER_BOX_SIZE 25
 #define	QUAD_IDX_BUFF_LENGTH 6
 
 static const char stickerVertexShader[] =
@@ -64,14 +75,25 @@ namespace Renderer
 		vertexBuff = stickerVertices;
 		indexBuff = stickerIndices;
 		textureCoordBuff = stickerTextureCoords;
+        
+        transformMatrixRecords.clear();
 	}
 
 	Sticker::~Sticker()
 	{
-
+		if (textureData != nullptr)
+		{
+			delete[] textureData;
+			textureData = nullptr;
+		}
 	}
 
-	void Sticker::init(int textureWidth, int textureHeight, unsigned char * rgba32TextureData)
+	void Sticker::init()
+	{
+		initDone = false;
+	}
+
+	void Sticker::initGL()
 	{
 		glProgram = ShaderUtil::createProgram(stickerVertexShader, stickerFragmentShader);
 		ShaderUtil::checkGlError("createProgram");
@@ -96,11 +118,28 @@ namespace Renderer
 		ShaderUtil::checkGlError("glGetUniformLocation");
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0,
-			GL_RGBA, GL_UNSIGNED_BYTE, rgba32TextureData);
+			GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 	}
 
-	void Sticker::draw()
+	void Sticker::setTexture(int textureWidth, int textureHeight, unsigned char * rgba32TextureData)
 	{
+		if (textureData == nullptr)
+		{
+			textureData = new unsigned char[textureWidth * textureHeight * 4];
+			memcpy(textureData, rgba32TextureData, textureWidth * textureHeight * 4);
+			this->textureWidth = textureWidth;
+			this->textureHeight = textureHeight;
+		}
+	}
+
+	void Sticker::draw(int imageIndex)
+	{
+		if (!initDone)
+		{
+			initGL();
+			initDone = true;
+		}
+
 		glUseProgram(glProgram);
 		ShaderUtil::checkGlError("glUseProgram");
 
@@ -118,11 +157,55 @@ namespace Renderer
 		glEnableVertexAttribArray(textureCoordHandle);
 		ShaderUtil::checkGlError("glEnableVertexAttribArray 2");
 
-		Matrix44F fullTransform = transformMatrix * modelMatrix;
+        if(imageIndex == 0)
+        {
+            VidChaser::removeTrackingPosition(trackableId);
+            trackableId = -1;
+        }
+        
+        if(imageIndex == lastIndex)
+        {
+            VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, VidChaser::TrackingMethod::TRANSLATION);
+        }
+        
+        if(trackableId != -1)
+        {
+            int processTime = 0;
+            Matrix33F transformMatrix33F;
+            Matrix44F transformMatrix44F, mvpMatrix44F;
+            
+            VidChaser::ResultCode temp = VidChaser::getTrackingResult(&transformMatrix33F.m[0][0], trackableId, &processTime);
+            
+            if(temp == VidChaser::ResultCode::SUCCESS)
+            {
+                MatrixUtil::GetTransformMatrix44F(ProjectionMatrix::getInstance()->getImageWidth(), ProjectionMatrix::getInstance()->getImageHeight(), transformMatrix44F, transformMatrix33F, mvpMatrix44F);
+                
+                transformMatrixRecords[imageIndex] = transformMatrix44F;
+            }
+            
+            if(lastIndex < imageIndex)
+            {
+                lastIndex = imageIndex;
+            }
+        }
+        
+        Matrix44F temp;
+        if(transformMatrixRecords.find(imageIndex) != transformMatrixRecords.end())
+        {
+            temp = transformMatrixRecords[imageIndex];
+        }
+        
+		Matrix44F modelMatrix = translation * scale * rotation;
+		Matrix44F fullTransform = temp * modelMatrix;
+		minX = fullTransform.m[0][3] - scale.m[0][0] / 2;
+		maxX = fullTransform.m[0][3] + scale.m[0][0] / 2;
+		minY = fullTransform.m[1][3] - scale.m[0][0] / 2;
+		maxY = fullTransform.m[1][3] + scale.m[0][0] / 2;
 
-		mvpMatrix = vpMatrix * fullTransform;
-		mvpMatrix = mvpMatrix.Transpose();
-		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, &mvpMatrix.m[0][0]);
+		Matrix44F projectionMatrix = ProjectionMatrix::getInstance()->getProjectionMatrix();
+		projectionMatrix = projectionMatrix * fullTransform;
+		projectionMatrix = projectionMatrix.Transpose();
+		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, &projectionMatrix.m[0][0]);
 
 		ShaderUtil::checkGlError("glUniformMatrix4fv");
 
@@ -141,39 +224,58 @@ namespace Renderer
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+    
+    int Sticker::getTrackableId()
+    {
+        return trackableId;
+    }
+    
+    
+    void Sticker::startTracking(int imageIndex, int touchX, int touchY)
+    {
+        CoordiCvtUtil::GetImageCoordiFromScreenCoordi(ProjectionMatrix::getInstance()->getSurfaceWidth(), ProjectionMatrix::getInstance()->getSurfaceHeight(), ProjectionMatrix::getInstance()->getImageWidth(), ProjectionMatrix::getInstance()->getImageHeight(), touchX, touchY, imageCoordX, imageCoordY);
+        
+        VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, VidChaser::TrackingMethod::TRANSLATION);
+        lastIndex = imageIndex;
+    }
+
 
 	void Sticker::setScale(float x, float y, float z)
 	{
-		modelMatrix.Scale(x, y, z);
+		scale.SetIdentity();
+		scale.Scale(x, y, z);
 	}
 
 	void Sticker::setTranslate(float x, float y, float z)
 	{
-		modelMatrix.Translate(x, y, z);
+		translation.SetIdentity();
+		translation.Translate(x, y, z);
 	}
 
 	void Sticker::setRotation(float angle, float x, float y, float z)
 	{
-		modelMatrix.Rotate(angle, x, y, z);
+		rotation.SetIdentity();
+		rotation.Rotate(angle, x, y, z);
 	}
 
-	void Sticker::applyTransform(Matrix44F & transform)
+    void Sticker::setTransform(int imageIndex, Matrix44F &transform)
+    {
+		transformMatrixRecords[imageIndex] = transform;
+    }
+
+	bool Sticker::isTouched(int touchX, int touchY)
 	{
-		transformMatrix = transform;
+		LOGD("touch x:%d, y:%d", touchX, touchY);
+		LOGD("min x:%f, y:%f", minX, minY);
+		LOGD("max x:%f, y:%f", maxX, maxY);
+		return (touchX >= minX && touchX <= maxX && touchY >= minY && touchY <= maxY);
 	}
     
-    void Sticker::setVPMatrix(Matrix44F & vp)
+    void Sticker::stopTracking()
     {
-        vpMatrix = vp;
-    }
-    
-    void Sticker::setTimeStamp(long& time)
-    {
-        timeStamp = time;
-    }
-    
-    long Sticker::getTimeStamp()
-    {
-        return timeStamp;
+        VidChaser::removeTrackingPosition(trackableId);
+        trackableId = -1;
+        lastIndex = -1;
+        transformMatrixRecords.clear();
     }
 }

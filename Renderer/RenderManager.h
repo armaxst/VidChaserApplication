@@ -21,11 +21,14 @@ namespace Renderer
 
 		void initRendering();
 		void updateRendering(int width, int height);
-		void draw(long timeStamp);
+		void draw(int imageIndex);
 		void deinit();
 		Sticker * createSticker();
         void addSticker(Sticker * sticker);
-        void setTransformMatrix(int idx, long timeStamp, Matrix44F &matrix);
+        void removeSticker(Sticker *sticker);
+        
+		Sticker * getTouchedSticker(int glX, int glY);
+
 	private:
         void drawInitFrame(long timeStamp);
         void drawInternal();

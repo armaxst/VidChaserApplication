@@ -10,13 +10,11 @@ import java.util.Arrays;
 class ImageReader {
 	private File fileList[];
 	private int currentIndex;
-	private long timestamp;
 	private boolean isRewind = false;
 	private int lastIndex;
 
 	ImageReader() {
-		currentIndex = -1;
-		timestamp = -1;
+		currentIndex = 0;
 	}
 
 	public void setPath(String path) {
@@ -28,45 +26,45 @@ class ImageReader {
 
 	boolean hasNext() {
 		if (isRewind) {
-			return (currentIndex > 0);
+			return (currentIndex >= 0);
 		} else {
 			return (currentIndex < lastIndex);
 		}
 	}
 
-	boolean isLast() {
-		return (currentIndex == lastIndex);
-	}
-
 	byte[] readFrame() {
-		if (currentIndex == -1) {
-			currentIndex = 0;
-			timestamp = 0;
-		} else if (isRewind) {
+		byte[] imageData = FileUtil.readImageBytesFromFile(fileList[currentIndex].getAbsolutePath());
+
+		if (isRewind) {
 			currentIndex--;
-			timestamp -= 33;
+			if (currentIndex < 0) {
+				currentIndex = 1;
+				isRewind = false;
+			}
 		} else {
 			currentIndex++;
-			timestamp += 33;
+			if (currentIndex >= lastIndex) {
+				currentIndex = 0;
+			}
 		}
-		return FileUtil.readImageBytesFromFile(fileList[currentIndex].getAbsolutePath());
+
+		return imageData;
 	}
 
 	int getCurrentIndex() {
 		return currentIndex;
 	}
 
-	public void rewind() {
-		this.isRewind = true;
-	}
-
-	long getTimestamp() {
-		return timestamp;
+	void rewind() {
+		isRewind = true;
 	}
 
 	void reset() {
-		currentIndex = -1;
-		timestamp = -1;
-		isRewind = false;
+		if (isRewind) {
+			currentIndex = 1;
+			isRewind = false;
+		} else {
+			currentIndex = 0;
+		}
 	}
 }

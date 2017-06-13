@@ -12,7 +12,7 @@ namespace Renderer
 
 	void updateRendering(int width, int height);
 
-	void draw(long timeStamp);
+	void draw(int imageIndex);
 
 	void deinit();
 
@@ -23,5 +23,7 @@ namespace Renderer
     
     void addSticker(Sticker *sticker);
     
-    void setTransformMatrix(int idx, long processTime, Matrix44F & matrix);
+    void removeSticker(Sticker *sticker);
+    
+	Sticker * getTouchedSticker(int touchX, int touchY);
 }

@@ -28,12 +28,20 @@ public class VidChaserRenderer implements GLSurfaceView.Renderer {
 		drawFrame();
 	}
 
+	// region -- GL Thread method
 	public static native void initRendering();
 	public static native void updateRendering(int width, int height);
 	public static native void drawFrame();
-	public static native void getImageCoordiFromScreenCoordi(int surfaceWidth, int surfaceHeight, int imageWidth, int imageHeight,
-															 int surfaceX, int surfaceY, int [] imageCoordi);
-	public static native void getGLCoordiFromScreenCoordi(int surfaceWidth, int surfaceHeight, int imageWidth, int imageHeight,
-														  int surfaceX, int surfaceY, float [] glCoordi);
-	public static native void addSticker(int textureWidth, int textureHeight, byte [] textureData, float glPositionX, float glPositionY, float scale);
+	public static native void addSticker(int textureWidth, int textureHeight, byte [] textureData, int touchX, int touchY, float scale);
+	public static native void removeSticker(long nativeStickerPointer);
+	// endregion -- GL Thread method
+
+	public static native void deinitRendering();
+
+	public static native void setImageSize(int width, int height);
+	public static native void setImageIndex(int index);
+	public static native long setTouchEvent(int touchAction, int touchX, int touchY);
+
+	public static native void startTracking(long nativeStickerId, int imageIndex, int touchX, int touchY);
+	public static native void stopTracking();
 }

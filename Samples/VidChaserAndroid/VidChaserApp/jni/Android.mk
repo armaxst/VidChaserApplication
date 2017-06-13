@@ -11,6 +11,7 @@ LOCAL_MODULE := VidChaserApp
 
 RENDERER_SRC_PATH := ../../../../Renderer
 RENDERER_SRCS := \
+    $(RENDERER_SRC_PATH)/ProjectionMatrix.cpp \
     $(RENDERER_SRC_PATH)/RendererAPI.cpp \
     $(RENDERER_SRC_PATH)/RenderManager.cpp \
     $(RENDERER_SRC_PATH)/ShaderUtil.cpp \

@@ -31,10 +31,8 @@ namespace Renderer
 			itor != stickerList.end();
 			itor++)
 		{
-			delete *itor;
+			(*itor)->init();
 		}
-
-		stickerList.clear();
 	}
 
 	void RenderManager::updateRendering(int width, int height)
@@ -42,101 +40,16 @@ namespace Renderer
 
 	}
 
-	void RenderManager::draw(long timeStamp)
+	void RenderManager::draw(int imageIndex)
 	{
-        if(traceIdx == -1)
-        {
-            drawInitFrame(timeStamp);
-        }
-        else
-        {
-            list<Sticker *>::iterator itor = stickerList.begin();
-            list<Sticker *>::iterator temp;
-            
-            for(int i = 0; i < traceIdx; i++)
-            {
-                itor++;
-            }
-            
-            temp = itor;
-            temp++;
-            
-            if(temp == stickerList.end())
-            {
-                if(timeStamp > (*itor)->getTimeStamp())
-                {
-                    (*itor)->draw();
-                    return;
-                }
-                
-                traceIdx = -1;
-                drawTimestamp = -1;
-                drawInitFrame(timeStamp);
-                return;
-            }
-            
-            if(timeStamp < (*temp)->getTimeStamp())
-            {
-                if(drawTimestamp == -1)
-                {
-                    return;
-                }
-                
-                if((timeStamp - drawTimestamp) > ((*temp)->getTimeStamp() - timeStamp))
-                {
-                    itor = temp;
-                    drawTimestamp = (*itor)->getTimeStamp();
-                    traceIdx++;
-                }
-            }
-            else
-            {
-                itor = temp;
-                drawTimestamp = (*itor)->getTimeStamp();
-                traceIdx++;
-            }
-            drawInternal();
-        }
-    }
-    
-    void RenderManager::drawInternal()
-    {
         for (list<Sticker *>::iterator itor = stickerList.begin();
-             itor != stickerList.end();
-             itor++)
+            itor != stickerList.end();
+            itor++)
         {
-            (*itor)->draw();
+            (*itor)->draw(imageIndex);
         }
     }
     
-    void RenderManager::drawInitFrame(long timeStamp)
-    {
-        list<Sticker *>::iterator itor = stickerList.begin();
-        if(itor == stickerList.end())
-        {
-            return;
-        }
-        
-        traceIdx = 0;
-        if(timeStamp < (*itor)->getTimeStamp())
-        {
-            return;
-        }
-        while(1)
-        {
-            itor++;
-            if(itor == stickerList.end())
-                break;
-            if(timeStamp <= (*itor)->getTimeStamp())
-                break;
-            traceIdx++;
-        }
-        
-        itor--;
-        drawTimestamp = (*itor)->getTimeStamp();
-        drawInternal();
-    }
-
 	void RenderManager::deinit()
 	{
 		for (list<Sticker *>::iterator itor = stickerList.begin();
@@ -159,17 +72,27 @@ namespace Renderer
     {
         stickerList.push_back(sticker);
     }
-
-    void RenderManager::setTransformMatrix(int idx, long timeStamp, Matrix44F &matrix)
+    
+    void RenderManager::removeSticker(Sticker *sticker)
     {
-        list<Sticker *>::iterator itor = stickerList.begin();
-        for(int i = 0; i < idx; i++)
-        {
-            itor++;
-        }
-        (*itor)->applyTransform(matrix);
-        (*itor)->setTimeStamp(timeStamp);
+        stickerList.remove(sticker);
     }
+
+	Sticker * RenderManager::getTouchedSticker(int touchX, int touchY)
+	{
+		list<Sticker *>::iterator itor = stickerList.begin();
+		for (list<Sticker *>::iterator itor = stickerList.begin();
+			itor != stickerList.end();
+			itor++)
+		{
+			if ((*itor)->isTouched(touchX, touchY))
+			{
+				return *itor;
+			}
+		}
+
+		return nullptr;
+	}
     
 	shared_ptr<RenderManager> RenderManager::getInstance()
 	{

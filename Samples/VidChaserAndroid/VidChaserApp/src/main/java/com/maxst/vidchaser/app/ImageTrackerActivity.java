@@ -4,6 +4,7 @@
 
 package com.maxst.vidchaser.app;
 
+import android.app.Dialog;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,9 +54,6 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	@Bind(R.id.trash_box)
 	ImageButton trashBox;
 
-	@Bind(R.id.progress_bar)
-	ProgressBar progressBar;
-
 	private ImageReader imageReader;
 
 	private List<Texture> textureList = new ArrayList<>();
@@ -67,6 +65,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	private boolean trackingReady = false;
 	private long nativeStickerPointer = 0;
 	private int imageIndexWhenTouch = 0;
+	private Dialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +118,10 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		VidChaserRenderer.setImageSize(imageWidth, imageHeight);
 
 		displayMetrics = getResources().getDisplayMetrics();
+
+		progressDialog = new Dialog(this,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+		progressDialog.setContentView(R.layout.dialog_progress);
+		progressDialog.setCancelable(false);
 	}
 
 	@Override
@@ -219,7 +222,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 				if (trackingReady) {
 					imageReader.rewind();
-					progressBar.setVisibility(View.VISIBLE);
+					progressDialog.show();
 					imageIndexWhenTouch = imageReader.getCurrentIndex();
 					VidChaserRenderer.startTracking(nativeStickerPointer, imageIndexWhenTouch, (int)event.getX(), (int)event.getY());
 					trackingReady = false;
@@ -271,7 +274,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 							Log.i(TAG, "imageIndexWhenTouch : " + trackerActivity.imageIndexWhenTouch);
 							Log.i(TAG, "getCurrentIndex : " + imageReader.getCurrentIndex());
 							if (trackerActivity.imageIndexWhenTouch < imageReader.getCurrentIndex()) {
-								trackerActivity.progressBar.setVisibility(View.GONE);
+								trackerActivity.progressDialog.dismiss();
 							}
 
 							int imageIndex = imageReader.getCurrentIndex();

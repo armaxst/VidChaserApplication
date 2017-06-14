@@ -6,6 +6,7 @@
 #include "ShaderUtil.h"
 #include <MatrixUtil.h>
 #include <map>
+#include <VidChaserDefine.h>
 
 using namespace std;
 
@@ -22,13 +23,14 @@ namespace Renderer
 		void draw(int imageIndex);
 		void reset();
         int getTrackableId();
-        void startTracking(int imageIndex, int touchX, int touchY);
         void setScale(float x, float y, float z = 1.0f);
 		void setTranslate(float x, float y, float z = 1.0f);
 		void setRotation(float angle, float x, float y, float z);
         void setTransform(int imageIndex, Matrix44F& transform);
 		bool isTouched(int touchX, int touchY);
-        void stopTracking();
+
+		void startTracking(int imageIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod);
+		void stopTracking();
         
 	private:
 		void initGL();
@@ -58,6 +60,8 @@ namespace Renderer
 		Matrix44F translation;
 		Matrix44F scale;
 		Matrix44F rotation;
+
+		VidChaser::TrackingMethod trackingMethod = VidChaser::TrackingMethod::TRANSLATION;
 
         map<int, Matrix44F> transformMatrixRecords;
 		float minX, minY;

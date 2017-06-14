@@ -42,6 +42,6 @@ public class VidChaserRenderer implements GLSurfaceView.Renderer {
 	public static native void setImageIndex(int index);
 	public static native long setTouchEvent(int touchAction, int touchX, int touchY);
 
-	public static native void startTracking(long nativeStickerId, int imageIndex, int touchX, int touchY);
-	public static native void stopTracking();
+	public static native void startTracking(long nativeStickerId, int imageIndex, int touchX, int touchY, int trackingMethod);
+	public static native void stopTracking(long nativeStickerId);
 }

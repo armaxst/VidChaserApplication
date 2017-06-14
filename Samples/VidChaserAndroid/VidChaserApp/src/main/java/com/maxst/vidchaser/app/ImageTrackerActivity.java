@@ -4,6 +4,7 @@
 
 package com.maxst.vidchaser.app;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -67,12 +68,17 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	private int imageIndexWhenTouch = 0;
 	private Dialog progressDialog;
 
+	int trackingMethod;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_image_tracker);
 
 		ButterKnife.bind(this);
+
+		trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
+				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_TRANSLATION);
 
 		engineVersion.setText(String.format(Locale.US, "Tracker version : %s", VidChaser.getEngineVersion()));
 
@@ -224,8 +230,12 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					imageReader.rewind();
 					progressDialog.show();
 					imageIndexWhenTouch = imageReader.getCurrentIndex();
-					VidChaserRenderer.startTracking(nativeStickerPointer, imageIndexWhenTouch, (int)event.getX(), (int)event.getY());
+					VidChaserRenderer.startTracking(nativeStickerPointer, imageIndexWhenTouch, (int)event.getX(), (int)event.getY(), trackingMethod);
 					trackingReady = false;
+				} else {
+					if (nativeStickerPointer != 0) {
+						VidChaserRenderer.stopTracking(nativeStickerPointer);
+					}
 				}
 		}
 		return true;
@@ -271,13 +281,16 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 						}
 
 						if (imageReader.hasNext()) {
-							Log.i(TAG, "imageIndexWhenTouch : " + trackerActivity.imageIndexWhenTouch);
-							Log.i(TAG, "getCurrentIndex : " + imageReader.getCurrentIndex());
+							//Log.i(TAG, "imageIndexWhenTouch : " + trackerActivity.imageIndexWhenTouch);
+							//Log.i(TAG, "getCurrentIndex : " + imageReader.getCurrentIndex());
 							if (trackerActivity.imageIndexWhenTouch < imageReader.getCurrentIndex()) {
 								trackerActivity.progressDialog.dismiss();
 							}
 
 							int imageIndex = imageReader.getCurrentIndex();
+							if (imageIndex == 0) {
+								Log.i(TAG, "Image index is 0");
+							}
 
 							byte[] fileBytes = imageReader.readFrame();
 
@@ -287,6 +300,8 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 							MaxstAR.setNewCameraFrame(fileBytes, 12, fileBytes.length - 12, trackerActivity.imageWidth, trackerActivity.imageHeight,
 									trackerActivity.imageFormat);
 						} else {
+							Log.i(TAG, "Image index arrived last");
+							Log.i(TAG, "Image index is : " + imageReader.getCurrentIndex());
 							imageReader.reset();
 						}
 

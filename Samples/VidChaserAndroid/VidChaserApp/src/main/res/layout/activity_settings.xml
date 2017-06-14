@@ -71,5 +71,42 @@
 			android:text="RGBA8888" />
 	</RadioGroup>
 
+	<RadioGroup
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_marginLeft="30dp"
+		android:orientation="vertical">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Tracking method"/>
+
+		<RadioButton
+			android:id="@+id/tracking_affine"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Affine" />
+
+		<RadioButton
+			android:id="@+id/tracking_homography"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Homography" />
+
+		<RadioButton
+			android:id="@+id/tracking_rigid"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Rigid" />
+
+		<RadioButton
+			android:id="@+id/tracking_translation"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Translation" />
+	</RadioGroup>
+
 
 </LinearLayout>

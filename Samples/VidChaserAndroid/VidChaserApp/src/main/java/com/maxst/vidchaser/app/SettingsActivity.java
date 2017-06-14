@@ -34,6 +34,18 @@ public class SettingsActivity extends Activity {
 	@Bind(R.id.image_rgba8888)
 	RadioButton imageFormatRGBA8888;
 
+	@Bind(R.id.tracking_affine)
+	RadioButton trackingAffine;
+
+	@Bind(R.id.tracking_homography)
+	RadioButton trackingHomography;
+
+	@Bind(R.id.tracking_rigid)
+	RadioButton trackingRigid;
+
+	@Bind(R.id.tracking_translation)
+	RadioButton trackingTranslation;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +80,26 @@ public class SettingsActivity extends Activity {
 
 			case 2:
 				imageFormatYUV.setChecked(true);
+				break;
+		}
+
+		int trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
+				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_TRANSLATION);
+		switch (trackingMethod) {
+			case VidChaserUtil.TRACKING_METHOD_AFFINE:
+				trackingAffine.setChecked(true);
+				break;
+
+			case VidChaserUtil.TRACKING_METHOD_HOMOGRAPHY:
+				trackingHomography.setChecked(true);
+				break;
+
+			case VidChaserUtil.TRACKING_METHOD_RIGID:
+				trackingRigid.setChecked(true);
+				break;
+
+			case VidChaserUtil.TRACKING_METHOD_TRANSLATION:
+				trackingTranslation.setChecked(true);
 				break;
 		}
 	}
@@ -120,6 +152,35 @@ public class SettingsActivity extends Activity {
 			case R.id.image_yuv:
 				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
 				editor.putInt(VidChaserUtil.PREF_KEY_IMAGE_FORMAT, 2);
+				editor.apply();
+				break;
+		}
+	}
+
+	@OnClick({R.id.tracking_affine, R.id.tracking_homography, R.id.tracking_rigid, R.id.tracking_translation})
+	public void onTrackingMethodClick(View view) {
+		switch (view.getId()) {
+			case R.id.tracking_affine:
+				SharedPreferences.Editor editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+				editor.putInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_AFFINE);
+				editor.apply();
+				break;
+
+			case R.id.tracking_homography:
+				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+				editor.putInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, 1);
+				editor.apply();
+				break;
+
+			case R.id.tracking_rigid:
+				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+				editor.putInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, 2);
+				editor.apply();
+				break;
+
+			case R.id.tracking_translation:
+				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+				editor.putInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, 2);
 				editor.apply();
 				break;
 		}

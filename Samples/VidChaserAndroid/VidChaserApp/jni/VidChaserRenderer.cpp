@@ -8,6 +8,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <VidChaserAPI.h>
+#include <VidChaserDefine.h>
 #include <ProjectionMatrix.h>
 #include <cmath>
 
@@ -157,10 +158,10 @@ extern "C"
 	}
 
     JNIEXPORT void JNICALL Java_com_maxst_vidchaser_renderer_VidChaserRenderer_startTracking
-    (JNIEnv * env, jclass obj, jlong stickerPointer, int imageIndex, int touchX, int touchY)
+    (JNIEnv * env, jclass obj, jlong stickerPointer, int imageIndex, int touchX, int touchY, int trackingMethod)
     {
         s_touchedSticker = (Renderer::Sticker *)stickerPointer;
-        s_touchedSticker->startTracking(imageIndex, touchX, touchY);
+        s_touchedSticker->startTracking(imageIndex, touchX, touchY, (VidChaser::TrackingMethod)trackingMethod);
     }
 
     JNIEXPORT void JNICALL Java_com_maxst_vidchaser_renderer_VidChaserRenderer_stopTracking

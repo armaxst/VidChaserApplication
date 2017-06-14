@@ -165,7 +165,7 @@ namespace Renderer
         
         if(imageIndex == lastIndex)
         {
-            VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, VidChaser::TrackingMethod::TRANSLATION);
+			VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, trackingMethod);
         }
         
         if(trackableId != -1)
@@ -178,7 +178,10 @@ namespace Renderer
             
             if(temp == VidChaser::ResultCode::SUCCESS)
             {
-                MatrixUtil::GetTransformMatrix44F(ProjectionMatrix::getInstance()->getImageWidth(), ProjectionMatrix::getInstance()->getImageHeight(), transformMatrix44F, transformMatrix33F, mvpMatrix44F);
+                MatrixUtil::GetTransformMatrix44F(
+					ProjectionMatrix::getInstance()->getImageWidth(), 
+					ProjectionMatrix::getInstance()->getImageHeight(), 
+					transformMatrix44F, transformMatrix33F, mvpMatrix44F);
                 
                 transformMatrixRecords[imageIndex] = transformMatrix44F;
             }
@@ -230,16 +233,6 @@ namespace Renderer
         return trackableId;
     }
     
-    
-    void Sticker::startTracking(int imageIndex, int touchX, int touchY)
-    {
-        CoordiCvtUtil::GetImageCoordiFromScreenCoordi(ProjectionMatrix::getInstance()->getSurfaceWidth(), ProjectionMatrix::getInstance()->getSurfaceHeight(), ProjectionMatrix::getInstance()->getImageWidth(), ProjectionMatrix::getInstance()->getImageHeight(), touchX, touchY, imageCoordX, imageCoordY);
-        
-        VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, VidChaser::TrackingMethod::TRANSLATION);
-        lastIndex = imageIndex;
-    }
-
-
 	void Sticker::setScale(float x, float y, float z)
 	{
 		scale.SetIdentity();
@@ -269,6 +262,23 @@ namespace Renderer
 		LOGD("min x:%f, y:%f", minX, minY);
 		LOGD("max x:%f, y:%f", maxX, maxY);
 		return (touchX >= minX && touchX <= maxX && touchY >= minY && touchY <= maxY);
+	}
+
+	void Sticker::startTracking(int imageIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod)
+	{
+		this->trackingMethod = trackingMethod;
+
+		LOGD("Tracking method : %d", trackingMethod);
+		CoordiCvtUtil::GetImageCoordiFromScreenCoordi(
+			ProjectionMatrix::getInstance()->getSurfaceWidth(), 
+			ProjectionMatrix::getInstance()->getSurfaceHeight(), 
+			ProjectionMatrix::getInstance()->getImageWidth(), 
+			ProjectionMatrix::getInstance()->getImageHeight(), 
+			touchX, touchY, 
+			imageCoordX, imageCoordY);
+
+		VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, trackingMethod);
+		lastIndex = imageIndex;
 	}
     
     void Sticker::stopTracking()

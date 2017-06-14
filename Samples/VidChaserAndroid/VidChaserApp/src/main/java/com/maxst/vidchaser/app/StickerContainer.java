@@ -46,7 +46,7 @@ public class StickerContainer extends RelativeLayout implements View.OnClickList
 	}
 
 	public static final int MAX_COLUMN_COUNT = 5;
-	public static final float STICKER_WIDTH_RATIO = 0.15f;
+	public static final float STICKER_WIDTH_RATIO = 0.1f;
 
 	private void addSticker() {
 		int width = getWidth();

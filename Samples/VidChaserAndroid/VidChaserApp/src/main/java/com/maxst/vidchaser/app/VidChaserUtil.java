@@ -25,4 +25,10 @@ class VidChaserUtil {
 	static final String PREF_NAME = "VidChaser";
 	static final String PREF_KEY_CAM_RESOLUTION = "cam_resolution";
 	static final String PREF_KEY_IMAGE_FORMAT = "image_foramt";
+	static final String PREF_KEY_TRACKING_METHOD = "tracking_method";
+
+	static final int TRACKING_METHOD_AFFINE = 0;
+	static final int TRACKING_METHOD_HOMOGRAPHY = 1;
+	static final int TRACKING_METHOD_RIGID = 2;
+	static final int TRACKING_METHOD_TRANSLATION = 3;
 }

@@ -11,7 +11,7 @@
 #include <string>
 
 namespace VidChaser {
-	/*
+	/**
 	* @brief get engine version.
 	* @return Engine version text.
 	*/
@@ -20,13 +20,13 @@ namespace VidChaser {
     
     VIDCHASER_API void init(std::string signature);
     
-	/*
+	/**
 	* @brief create Engine.
 	* @return result code.
 	*/
 	VIDCHASER_API ResultCode create();
 
-	/*
+	/**
 	* @brief Add tracking position(image coordinate).
 	* @param x tracking position x(pixel).
 	* @param y tracking position y(pixel).
@@ -40,14 +40,14 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API ResultCode addTrackingPosition(int x, int y, int* idx, TrackingMethod trackingMethod = TrackingMethod::TRANSLATION);
 
-	/*
+	/**
 	* @brief Remove the tracking position of the corresponding input index.
 	* @param idx index you want to delete.
 	* @return result code.
 	*/
 	VIDCHASER_API ResultCode removeTrackingPosition(int idx);
 
-	/*
+	/**
 	* @brief start tracking using input image.
 	* @param image image data.
 	* @param width image width.
@@ -64,7 +64,7 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API ResultCode setTrackingImage(unsigned char* image, int width, int height, int colorFormat, long imageIdx);
 
-	/*
+	/**
 	* @brief get tracking result for the index.
 	* @param transfromMatrx3x3 output 3x3 transform matrix.
 	* @param idx index you want to get result.
@@ -72,7 +72,7 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API ResultCode getTrackingResult(float* transformMatrix3x3, int idx, int* millis);
 
-	/*
+	/**
 	* @brief destory tracking engine.
 	* @return result code.
 	*/

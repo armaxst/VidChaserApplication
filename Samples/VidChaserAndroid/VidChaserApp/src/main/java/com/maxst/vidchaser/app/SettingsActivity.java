@@ -84,7 +84,7 @@ public class SettingsActivity extends Activity {
 		}
 
 		int trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
-				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_TRANSLATION);
+				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_RIGID);
 		switch (trackingMethod) {
 			case VidChaserUtil.TRACKING_METHOD_AFFINE:
 				trackingAffine.setChecked(true);

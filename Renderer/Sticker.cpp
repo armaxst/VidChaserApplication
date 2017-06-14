@@ -157,12 +157,6 @@ namespace Renderer
 		glEnableVertexAttribArray(textureCoordHandle);
 		ShaderUtil::checkGlError("glEnableVertexAttribArray 2");
 
-        if(imageIndex == 0)
-        {
-            VidChaser::removeTrackingPosition(trackableId);
-            trackableId = -1;
-        }
-        
         if(imageIndex == lastIndex)
         {
 			VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, trackingMethod);
@@ -191,6 +185,12 @@ namespace Renderer
                 lastIndex = imageIndex;
             }
         }
+
+		if (imageIndex == 0)
+		{
+			VidChaser::removeTrackingPosition(trackableId);
+			trackableId = -1;
+		}
         
         Matrix44F temp;
         if(transformMatrixRecords.find(imageIndex) != transformMatrixRecords.end())

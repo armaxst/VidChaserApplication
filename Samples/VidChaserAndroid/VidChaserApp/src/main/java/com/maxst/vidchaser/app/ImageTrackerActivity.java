@@ -78,7 +78,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		ButterKnife.bind(this);
 
 		trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
-				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_TRANSLATION);
+				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_RIGID);
 
 		engineVersion.setText(String.format(Locale.US, "Tracker version : %s", VidChaser.getEngineVersion()));
 
@@ -276,7 +276,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					case 0:
 						if (trackerActivity.trackingReady) {
 							trackerActivity.glSurfaceView.requestRender();
-							sendEmptyMessageDelayed(0, 33);
+							sendEmptyMessageDelayed(0, 10);
 							return;
 						}
 
@@ -305,7 +305,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 							imageReader.reset();
 						}
 
-						sendEmptyMessageDelayed(0, 33);
+						sendEmptyMessageDelayed(0, 10);
 						trackerActivity.glSurfaceView.requestRender();
 						break;
 				}

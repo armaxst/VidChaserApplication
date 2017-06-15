@@ -80,7 +80,6 @@ namespace Renderer
 
 	Sticker * RenderManager::getTouchedSticker(int touchX, int touchY)
 	{
-		list<Sticker *>::iterator itor = stickerList.begin();
 		for (list<Sticker *>::iterator itor = stickerList.begin();
 			itor != stickerList.end();
 			itor++)

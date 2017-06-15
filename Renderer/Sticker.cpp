@@ -66,6 +66,7 @@ namespace Renderer
 {
 	Sticker::Sticker()
 	{
+        trackableId = -1;
 		glProgram = 0;
 		positionHandle = 0;
 		textureCoordHandle = 0;
@@ -159,6 +160,14 @@ namespace Renderer
 
         if(imageIndex == lastIndex)
         {
+            VidChaser::removeTrackingPosition(trackableId);
+            touchIndex = -1;
+            lastIndex = -1;
+            trackableId = -1;
+        }
+        
+        if(imageIndex == touchIndex)
+        {
 			VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, trackingMethod);
         }
         
@@ -180,16 +189,16 @@ namespace Renderer
                 transformMatrixRecords[imageIndex] = transformMatrix44F;
             }
             
-            if(lastIndex < imageIndex)
+            if(touchIndex < imageIndex)
             {
-                lastIndex = imageIndex;
+                touchIndex = imageIndex;
             }
         }
 
 		if (imageIndex == 0)
 		{
 			VidChaser::removeTrackingPosition(trackableId);
-			trackableId = -1;
+            trackableId = -1;
 		}
         
         Matrix44F temp;
@@ -264,11 +273,12 @@ namespace Renderer
 		return (touchX >= minX && touchX <= maxX && touchY >= minY && touchY <= maxY);
 	}
 
-	void Sticker::startTracking(int imageIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod)
+	void Sticker::startTracking(int imageIndex, int lastIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod)
 	{
+        this->lastIndex = lastIndex;
 		this->trackingMethod = trackingMethod;
 
-		LOGD("Tracking method : %d", trackingMethod);
+        LOGD("Tracking method : %d", trackingMethod);
 		CoordiCvtUtil::GetImageCoordiFromScreenCoordi(
 			ProjectionMatrix::getInstance()->getSurfaceWidth(), 
 			ProjectionMatrix::getInstance()->getSurfaceHeight(), 
@@ -278,13 +288,14 @@ namespace Renderer
 			imageCoordX, imageCoordY);
 
 		VidChaser::addTrackingPosition(imageCoordX, imageCoordY, &trackableId, trackingMethod);
-		lastIndex = imageIndex;
+		touchIndex = imageIndex;
 	}
     
     void Sticker::stopTracking()
     {
         VidChaser::removeTrackingPosition(trackableId);
         trackableId = -1;
+        touchIndex = -1;
         lastIndex = -1;
         transformMatrixRecords.clear();
     }

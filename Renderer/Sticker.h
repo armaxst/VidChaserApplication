@@ -32,8 +32,8 @@ namespace Renderer
 		void setRotation(float angle, float x, float y, float z);
         void setTransform(int imageIndex, Matrix44F& transform);
 		bool isTouched(int touchX, int touchY);
-
-		void startTracking(int imageIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod);
+        
+		void startTracking(int imageIndex, int lastIndex, int touchX, int touchY, VidChaser::TrackingMethod trackingMethod);
 		void stopTracking();
         
 	private:
@@ -51,6 +51,7 @@ namespace Renderer
         int trackableId = -1;
         int imageCoordX = 0;
         int imageCoordY = 0;
+        int touchIndex = -1;
         int lastIndex = -1;
         
         unsigned char * textureData = nullptr;

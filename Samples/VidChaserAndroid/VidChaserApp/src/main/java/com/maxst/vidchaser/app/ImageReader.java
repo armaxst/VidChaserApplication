@@ -11,24 +11,22 @@ class ImageReader {
 	private File fileList[];
 	private int currentIndex;
 	private boolean isRewind = false;
-	private int lastIndex;
 
 	ImageReader() {
 		currentIndex = 0;
 	}
 
-	public void setPath(String path) {
+	boolean setPath(String path) {
 		fileList = new File(path).listFiles();
 		Arrays.sort(fileList);
-
-		lastIndex = fileList.length - 1;
+		return (fileList != null && fileList.length > 0);
 	}
 
 	boolean hasNext() {
 		if (isRewind) {
 			return (currentIndex >= 0);
 		} else {
-			return (currentIndex < lastIndex);
+			return (currentIndex < fileList.length);
 		}
 	}
 
@@ -37,16 +35,22 @@ class ImageReader {
 
 		if (isRewind) {
 			currentIndex--;
-			if (currentIndex < 0) {
-				currentIndex = 1;
-				isRewind = false;
-			}
 		} else {
 			currentIndex++;
-			if (currentIndex >= lastIndex) {
-				currentIndex = 0;
-			}
 		}
+//
+//		if (isRewind) {
+//			currentIndex--;
+//			if (currentIndex < 0) {
+//				currentIndex = 0;
+//				isRewind = false;
+//			}
+//		} else {
+//			currentIndex++;
+//			if (currentIndex >= lastIndex) {
+//				currentIndex = 0;
+//			}
+//		}
 
 		return imageData;
 	}
@@ -61,10 +65,9 @@ class ImageReader {
 
 	void reset() {
 		if (isRewind) {
-			currentIndex = 1;
 			isRewind = false;
-		} else {
-			currentIndex = 0;
 		}
+
+		currentIndex = 0;
 	}
 }

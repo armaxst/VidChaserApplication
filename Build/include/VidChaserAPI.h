@@ -17,6 +17,12 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API char* getEngineVersion();
 
+    /**
+    * @brief init Engine Signature for iOS.
+    * @return result code.
+    */
+    VIDCHASER_API ResultCode init(std::string signature);
+    
 	/**
 	* @brief create Engine.
 	* @return result code.

@@ -17,7 +17,7 @@
 #define  LOGI(...) printf(LOG_TAG, __VA_ARGS__)
 #define  LOGD(...) printf(LOG_TAG, __VA_ARGS__)
 #else
-#define LOGE
-#define LOGI
-#define LOGD
+#define LOGE(...) {printf(__VA_ARGS__); printf("\n");}
+#define LOGI(...) {printf(__VA_ARGS__); printf("\n");}
+#define LOGD(...) {printf(__VA_ARGS__); printf("\n");}
 #endif

@@ -6,7 +6,11 @@
 #include "ShaderUtil.h"
 #include <MatrixUtil.h>
 #include <map>
+#ifdef __IOS__
+#include <VidChaserEngine/VidChaserDefine.h>
+#else
 #include <VidChaserDefine.h>
+#endif
 
 using namespace std;
 

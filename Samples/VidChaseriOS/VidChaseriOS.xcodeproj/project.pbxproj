@@ -98,7 +98,7 @@
 		716B0D2E1EDE5A1A000FA609 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		716B0D301EDE5A23000FA609 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		716DCFD41EEF7796004C9334 /* CollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionViewCell.h; sourceTree = "<group>"; };
-		71F55D5A1EDD2E7000794AFE /* VidChaserSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VidChaserSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		71F55D5A1EDD2E7000794AFE /* VidChaseriOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VidChaseriOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71F55D5E1EDD2E7000794AFE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		71F55D601EDD2E7000794AFE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		71F55D611EDD2E7000794AFE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				71570A2F1EE8D90100072B7C /* Renderer */,
-				71F55D5C1EDD2E7000794AFE /* VidChaserSample */,
+				71F55D5C1EDD2E7000794AFE /* VidChaseriOS */,
 				71F55D5B1EDD2E7000794AFE /* Products */,
 				71F55D7A1EDD4F5800794AFE /* Resources */,
 				71F55D741EDD2EBD00794AFE /* Frameworks */,
@@ -168,12 +168,12 @@
 		71F55D5B1EDD2E7000794AFE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				71F55D5A1EDD2E7000794AFE /* VidChaserSample.app */,
+				71F55D5A1EDD2E7000794AFE /* VidChaseriOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		71F55D5C1EDD2E7000794AFE /* VidChaserSample */ = {
+		71F55D5C1EDD2E7000794AFE /* VidChaseriOS */ = {
 			isa = PBXGroup;
 			children = (
 				71F55D601EDD2E7000794AFE /* AppDelegate.h */,
@@ -200,6 +200,7 @@
 				71F55D6E1EDD2E7000794AFE /* Info.plist */,
 				71F55D5D1EDD2E7000794AFE /* Supporting Files */,
 			);
+			name = VidChaseriOS;
 			path = VidChaserSample;
 			sourceTree = "<group>";
 		};
@@ -246,9 +247,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		71F55D591EDD2E7000794AFE /* VidChaserSample */ = {
+		71F55D591EDD2E7000794AFE /* VidChaseriOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 71F55D711EDD2E7000794AFE /* Build configuration list for PBXNativeTarget "VidChaserSample" */;
+			buildConfigurationList = 71F55D711EDD2E7000794AFE /* Build configuration list for PBXNativeTarget "VidChaseriOS" */;
 			buildPhases = (
 				71F55D561EDD2E7000794AFE /* Sources */,
 				71F55D571EDD2E7000794AFE /* Frameworks */,
@@ -259,9 +260,9 @@
 			);
 			dependencies = (
 			);
-			name = VidChaserSample;
+			name = VidChaseriOS;
 			productName = VidChaserSample;
-			productReference = 71F55D5A1EDD2E7000794AFE /* VidChaserSample.app */;
+			productReference = 71F55D5A1EDD2E7000794AFE /* VidChaseriOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -280,7 +281,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 71F55D551EDD2E7000794AFE /* Build configuration list for PBXProject "VidChaserSample" */;
+			buildConfigurationList = 71F55D551EDD2E7000794AFE /* Build configuration list for PBXProject "VidChaseriOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -293,7 +294,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				71F55D591EDD2E7000794AFE /* VidChaserSample */,
+				71F55D591EDD2E7000794AFE /* VidChaseriOS */,
 			);
 		};
 /* End PBXProject section */
@@ -500,7 +501,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		71F55D551EDD2E7000794AFE /* Build configuration list for PBXProject "VidChaserSample" */ = {
+		71F55D551EDD2E7000794AFE /* Build configuration list for PBXProject "VidChaseriOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				71F55D6F1EDD2E7000794AFE /* Debug */,
@@ -509,7 +510,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		71F55D711EDD2E7000794AFE /* Build configuration list for PBXNativeTarget "VidChaserSample" */ = {
+		71F55D711EDD2E7000794AFE /* Build configuration list for PBXNativeTarget "VidChaseriOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				71F55D721EDD2E7000794AFE /* Debug */,

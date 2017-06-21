@@ -5,9 +5,7 @@
 package com.maxst.vidchaser.app;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,18 +55,19 @@ public class StickerContainer extends RelativeLayout implements View.OnClickList
 
 		for (int i = 0; i < stickerList.size(); i++) {
 			Texture texture = stickerList.get(i);
-			int[] data = new int[texture.width * texture.height];
+//			int[] data = new int[texture.width * texture.height];
+//			texture.textureBuffer.get(data, 0, data.length);
 
-			for (int p = 0; p < texture.width * texture.height; ++p) {
-				data[p] = ((texture.data[p * 4 + 3] << 24) & 0xff000000) |
-						((texture.data[p * 4] << 16) & 0x00ff0000) |
-						((texture.data[p * 4 + 1] << 8) & 0x0000ff00) |
-						((texture.data[p * 4 + 2]) & 0x000000ff);
-			}
+//			for (int p = 0; p < texture.width * texture.height; ++p) {
+//				data[p] = ((texture.data[p * 4 + 3] << 24) & 0xff000000) |
+//						((texture.data[p * 4] << 16) & 0x00ff0000) |
+//						((texture.data[p * 4 + 1] << 8) & 0x0000ff00) |
+//						((texture.data[p * 4 + 2]) & 0x000000ff);
+//			}
 
-			Bitmap bitmap = Bitmap.createBitmap(data, 0, texture.width, texture.width, texture.height, Bitmap.Config.ARGB_8888);
+			//Bitmap bitmap = Bitmap.createBitmap(data, 0, texture.width, texture.width, texture.height, Bitmap.Config.ARGB_8888);
 			ImageView imageView = new ImageView(getContext());
-			imageView.setImageBitmap(bitmap);
+			imageView.setImageBitmap(texture.bitmap);
 			imageView.setTag(texture);
 			imageView.setOnTouchListener(new OnTouchListener() {
 				@Override

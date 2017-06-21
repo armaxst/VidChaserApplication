@@ -51,8 +51,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			break;
 		}
 	}
-
-	static {
-		System.loadLibrary("VidChaserApp");
-	}
+//
+//	static {
+//		System.loadLibrary("VidChaserApp");
+//	}
 }

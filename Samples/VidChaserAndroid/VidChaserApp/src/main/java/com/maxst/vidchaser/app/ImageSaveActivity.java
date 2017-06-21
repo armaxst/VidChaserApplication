@@ -13,10 +13,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.maxst.vidchaser.VidChaser;
-import com.maxst.vidchaser.renderer.VidChaserRenderer;
-import com.maxstar.MaxstAR;
-import com.maxstar.camera.OnNewCameraFrameCallback;
+import com.maxst.vidchaser.OnNewCameraFrameCallback;
+import com.maxst.vidchaser.VidChaserAPI;
 
 import java.io.File;
 import java.util.Locale;
@@ -93,10 +91,10 @@ public class ImageSaveActivity extends Activity {
 		}
 
 		glSurfaceView.setRenderer(new VidChaserRenderer());
+		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-		MaxstAR.init(this);
-		MaxstAR.setSignature("icWQYj5ucBSSl2DXHNVSTdDalq+Doh1uEfCs+kgITS8=");
-		MaxstAR.setOnNewCameraFrameCallback(onNewCameraFrameCallback);
+		VidChaserAPI.create(this, getResources().getString(R.string.app_free_key));
+		VidChaserAPI.setOnNewCameraFrameCallback(onNewCameraFrameCallback);
 
 		handlerThread = new HandlerThread("ImageSaveHandlerThread");
 		handlerThread.start();
@@ -109,15 +107,15 @@ public class ImageSaveActivity extends Activity {
 
 		switch (preferResolution) {
 			case 0:
-				MaxstAR.startCamera(0, 640, 480);
+				VidChaserAPI.startCamera(0, 640, 480);
 				break;
 
 			case 1:
-				MaxstAR.startCamera(0, 1280, 720);
+				VidChaserAPI.startCamera(0, 1280, 720);
 				break;
 
 			case 2:
-				MaxstAR.startCamera(0, 1920, 1080);
+				VidChaserAPI.startCamera(0, 1920, 1080);
 				break;
 		}
 
@@ -129,7 +127,7 @@ public class ImageSaveActivity extends Activity {
 		super.onPause();
 
 		glSurfaceView.onPause();
-		MaxstAR.stopCamera();
+		VidChaserAPI.stopCamera();
 
 		imageSaveHandler.removeCallbacksAndMessages(null);
 	}
@@ -138,9 +136,11 @@ public class ImageSaveActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		ButterKnife.unbind(this);
 		handlerThread.quit();
-		MaxstAR.deinit();
+		ButterKnife.unbind(this);
+		VidChaserAPI.destroy();
+
+		VidChaserAPI.deinitRendering();
 	}
 
 	private static final int MAX_FRAME_COUNT = 300;
@@ -201,7 +201,7 @@ public class ImageSaveActivity extends Activity {
 									System.arraycopy(sharedImageBuffer, 0, imageBufferForSave, 0, imageBufferLength);
 									imageCopyLock.unlock();
 								}
-								VidChaser.saveCameraFrame(fileName, imageBufferForSave, imageBufferLength, imageWidth, imageHeight, imageSaveFormat);
+								VidChaserAPI.saveCameraFrame(fileName, imageBufferForSave, imageBufferLength, imageWidth, imageHeight, imageSaveFormat);
 								runOnUiThread(new Runnable() {
 									@Override
 									public void run() {

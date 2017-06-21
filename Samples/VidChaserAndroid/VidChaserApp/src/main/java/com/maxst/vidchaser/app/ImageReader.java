@@ -31,32 +31,23 @@ class ImageReader {
 	}
 
 	byte[] readFrame() {
-		byte[] imageData = FileUtil.readImageBytesFromFile(fileList[currentIndex].getAbsolutePath());
+		byte[] imageData = VidChaserUtil.readImageBytesFromFile(fileList[currentIndex].getAbsolutePath());
 
 		if (isRewind) {
 			currentIndex--;
 		} else {
 			currentIndex++;
 		}
-//
-//		if (isRewind) {
-//			currentIndex--;
-//			if (currentIndex < 0) {
-//				currentIndex = 0;
-//				isRewind = false;
-//			}
-//		} else {
-//			currentIndex++;
-//			if (currentIndex >= lastIndex) {
-//				currentIndex = 0;
-//			}
-//		}
 
 		return imageData;
 	}
 
 	int getCurrentIndex() {
 		return currentIndex;
+	}
+
+	int getLastIndex() {
+		return fileList.length - 1;
 	}
 
 	void rewind() {

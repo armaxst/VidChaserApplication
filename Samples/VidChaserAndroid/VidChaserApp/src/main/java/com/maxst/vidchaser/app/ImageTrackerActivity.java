@@ -17,13 +17,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.maxst.vidchaser.VidChaser;
-import com.maxst.vidchaser.renderer.VidChaserRenderer;
-import com.maxstar.MaxstAR;
+import com.maxst.vidchaser.ProjectionMatrix;
+import com.maxst.vidchaser.VidChaserAPI;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -38,8 +36,6 @@ import butterknife.OnClick;
 public class ImageTrackerActivity extends AppCompatActivity implements View.OnTouchListener {
 
 	private static final String TAG = ImageTrackerActivity.class.getName();
-
-	private MessageHandler messageHandler;
 
 	@Bind(R.id.image_size)
 	TextView imageSizeTextView;
@@ -56,17 +52,17 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	@Bind(R.id.trash_box)
 	ImageButton trashBox;
 
-	private ImageReader imageReader;
+	ImageReader imageReader;
 
-	private List<Texture> textureList = new ArrayList<>();
-	private int imageWidth = 0;
-	private int imageHeight = 0;
-	private int imageFormat = 0;
-	private GestureDetector gestureDetector;
-	private DisplayMetrics displayMetrics;
-	private boolean trackingReady = false;
-	private long nativeStickerPointer = 0;
-	private Dialog progressDialog;
+	List<Texture> textureList = new ArrayList<>();
+	int imageWidth = 0;
+	int imageHeight = 0;
+	int imageFormat = 0;
+	GestureDetector gestureDetector;
+	DisplayMetrics displayMetrics;
+	boolean trackingReady = false;
+	Dialog progressDialog;
+	RenderHandler renderHandler;
 
 	int trackingMethod;
 
@@ -80,7 +76,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
 				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_RIGID);
 
-		engineVersion.setText(String.format(Locale.US, "Tracker version : %s", VidChaser.getEngineVersion()));
+		engineVersion.setText(String.format(Locale.US, "Tracker version : %s", VidChaserAPI.getEngineVersion()));
 
 		imageReader = new ImageReader();
 		if (!imageReader.setPath(VidChaserUtil.IMAGE_PATH)) {
@@ -88,12 +84,13 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 			finish();
 		}
 
-		// Read first image data to get image width ,height, format
+		// Read first image data to get image width, height, format
 		byte[] imageFileBytes = imageReader.readFrame();
 
-		imageWidth = ConvertUtil.byteArrayToInt(imageFileBytes, 0);
-		imageHeight = ConvertUtil.byteArrayToInt(imageFileBytes, 4);
-		imageFormat = ConvertUtil.byteArrayToInt(imageFileBytes, 8);
+		imageWidth = VidChaserUtil.byteArrayToInt(imageFileBytes, 0);
+		imageHeight = VidChaserUtil.byteArrayToInt(imageFileBytes, 4);
+		imageFormat = VidChaserUtil.byteArrayToInt(imageFileBytes, 8);
+		ProjectionMatrix.getInstance().setImageSize(imageWidth, imageHeight);
 
 		imageReader.reset();
 
@@ -101,14 +98,10 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 		glSurfaceView.setEGLContextClientVersion(2);
 		glSurfaceView.setOnTouchListener(this);
-		glSurfaceView.setRenderer(new VidChaserRenderer());
+		glSurfaceView.setRenderer(new VidChaserRenderer(renderingCallback));
 		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-		messageHandler = new MessageHandler(this);
-
-		MaxstAR.init(this);
-		MaxstAR.setSignature("icWQYj5ucBSSl2DXHNVSTdDalq+Doh1uEfCs+kgITS8=");
-		VidChaser.create(this, "icWQYj5ucBSSl2DXHNVSTdDalq+Doh1uEfCs+kgITS8=");
+		VidChaserAPI.create(this, getResources().getString(R.string.app_pro_key));
 
 		try {
 			String[] textureFiles = getAssets().list("Sticker");
@@ -124,28 +117,30 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 		gestureDetector = new GestureDetector(this,onGestureListener);
 
-		VidChaserRenderer.setImageSize(imageWidth, imageHeight);
-
 		displayMetrics = getResources().getDisplayMetrics();
 
 		progressDialog = new Dialog(this,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
 		progressDialog.setContentView(R.layout.dialog_progress);
 		progressDialog.setCancelable(false);
+
+		ARManager.getInstance().clear();
+
+		renderHandler = new RenderHandler(glSurfaceView);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-
 		glSurfaceView.onResume();
-		messageHandler.sendEmptyMessageDelayed(0, 33);
+
+		renderHandler.sendEmptyMessage(0);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		messageHandler.removeCallbacksAndMessages(null);
+		renderHandler.removeCallbacksAndMessages(null);
 		glSurfaceView.onPause();
 	}
 
@@ -154,9 +149,8 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		super.onDestroy();
 
 		ButterKnife.unbind(this);
-		VidChaser.destroy();
-		MaxstAR.deinit();
-		VidChaserRenderer.deinitRendering();
+		VidChaserAPI.destroy();
+		VidChaserAPI.deinitRendering();
 	}
 
 	@OnClick(R.id.show_sticker_list)
@@ -171,9 +165,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		}
 
 		@Override
-		public void onShowPress(MotionEvent e) {
-
-		}
+		public void onShowPress(MotionEvent e) { }
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent e) {
@@ -187,9 +179,14 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 		public void onLongPress(MotionEvent e) {
 			Log.e(TAG, "Long press detected");
-			nativeStickerPointer = VidChaserRenderer.setTouchEvent((int)e.getX(), (int)e.getY(), 3);
-			trackingReady = true;
-			trashBox.setVisibility(View.GONE);
+
+			float [] glCoord = new float[2];
+			VidChaserAPI.getGLCoordFromScreenCoord((int)e.getX(), (int)e.getY(), glCoord);
+			selectedSticker = ARManager.getInstance().getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
+			if (selectedSticker != null) {
+				trackingReady = true;
+				trashBox.setVisibility(View.GONE);
+			}
 		}
 
 		@Override
@@ -198,33 +195,47 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		}
 	};
 
+	private Sticker selectedSticker = null;
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-				//messageHandler.removeCallbacksAndMessages(null);
 				gestureDetector.onTouchEvent(event);
-				nativeStickerPointer = VidChaserRenderer.setTouchEvent((int)event.getX(), (int)event.getY(), event.getAction());
-				if (nativeStickerPointer != 0) {
+
+				float [] glCoord = new float[2];
+				VidChaserAPI.getGLCoordFromScreenCoord((int)event.getX(), (int)event.getY(), glCoord);
+
+				selectedSticker = ARManager.getInstance().getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
+				if (selectedSticker != null) {
+					ARManager.getInstance().stopTracking(selectedSticker);
 					trashBox.setVisibility(View.VISIBLE);
 				}
 				break;
 
 			case MotionEvent.ACTION_MOVE:
 				gestureDetector.onTouchEvent(event);
-				nativeStickerPointer = VidChaserRenderer.setTouchEvent((int)event.getX(), (int)event.getY(), event.getAction());
+
+				if (selectedSticker != null) {
+					glCoord = new float[2];
+					VidChaserAPI.getGLCoordFromScreenCoord((int)event.getX(), (int)event.getY(), glCoord);
+					selectedSticker.setTranslate(glCoord[0], glCoord[1], 0.0f);
+				}
 				break;
 
 			case MotionEvent.ACTION_UP:
 				gestureDetector.onTouchEvent(event);
-				nativeStickerPointer = VidChaserRenderer.setTouchEvent((int)event.getX(), (int)event.getY(), event.getAction());
+				if (selectedSticker == null) {
+					break;
+				}
+
 				trashBox.setVisibility(View.GONE);
 				if (!trackingReady && event.getY() > displayMetrics.heightPixels - 200) {
 					glSurfaceView.queueEvent(new Runnable() {
 						@Override
 						public void run() {
-							VidChaserRenderer.removeSticker(nativeStickerPointer);
-							nativeStickerPointer = 0;
+							ARManager.getInstance().removeSticker(selectedSticker);
+							selectedSticker = null;
 						}
 					});
 				}
@@ -233,12 +244,11 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					imageReader.rewind();
 					progressDialog.show();
 					int imageIndexWhenTouch = imageReader.getCurrentIndex();
-					VidChaserRenderer.startTracking(nativeStickerPointer, imageIndexWhenTouch, (int)event.getX(), (int)event.getY(), trackingMethod);
+					ARManager.getInstance().startTracking(selectedSticker, imageIndexWhenTouch,
+							imageReader.getLastIndex(), (int)event.getX(), (int)event.getY(), trackingMethod);
 					trackingReady = false;
 				} else {
-					if (nativeStickerPointer != 0) {
-						VidChaserRenderer.stopTracking(nativeStickerPointer);
-					}
+					ARManager.getInstance().stopTracking(selectedSticker);
 				}
 		}
 		return true;
@@ -250,60 +260,73 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 			final int touchX = (int)event.getRawX();
 			final int touchY = (int)event.getRawY();
 
+			final float [] glCoords = new float[2];
+			VidChaserAPI.getGLCoordFromScreenCoord(touchX, touchY, glCoords);
+
 			float ratio = imageWidth / (float)glSurfaceView.getWidth();
 			final float glStickerScale = size * ratio;
 
 			glSurfaceView.queueEvent(new Runnable() {
 				@Override
 				public void run() {
-					VidChaserRenderer.addSticker(texture.width, texture.height, texture.data, touchX, touchY, glStickerScale);
+					Sticker sticker = new Sticker();
+					sticker.setProjectionMatrix(ProjectionMatrix.getInstance().getProjectionMatrix());
+					sticker.setTexture(texture.bitmap);
+					sticker.setScale(glStickerScale, glStickerScale, glStickerScale);
+					sticker.setTranslate(glCoords[0], glCoords[1], 0.0f);
+					ARManager.getInstance().addSticker(sticker);
 				}
 			});
 		}
 	};
 
-	private static class MessageHandler extends Handler {
-		private WeakReference<ImageTrackerActivity> trackerActivityWeakReference;
+	private VidChaserRenderer.RenderingCallback renderingCallback = new VidChaserRenderer.RenderingCallback() {
 
-		MessageHandler(ImageTrackerActivity trackerActivity) {
-			trackerActivityWeakReference = new WeakReference<>(trackerActivity);
+		@Override
+		public void onRenderCallback() {
+			if (trackingReady) {
+				ARManager.getInstance().drawSticker(imageReader.getCurrentIndex());
+				return;
+			}
+
+			if (imageReader.hasNext()) {
+				int imageIndex = imageReader.getCurrentIndex();
+
+				byte[] fileBytes = imageReader.readFrame();
+
+				VidChaserAPI.setNewFrame(fileBytes, 12, fileBytes.length - 12, imageWidth, imageHeight, imageFormat, imageIndex);
+			} else {
+				Log.i(TAG, "Image index arrived last");
+				Log.i(TAG, "Image index is : " + imageReader.getCurrentIndex());
+				imageReader.reset();
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog.dismiss();
+					}
+				});
+			}
+
+			ARManager.getInstance().drawSticker(imageReader.getCurrentIndex());
+		}
+	};
+
+	private static class RenderHandler extends Handler {
+
+		private WeakReference<GLSurfaceView> glSurfaceViewWeakReference;
+
+		RenderHandler(GLSurfaceView glSurfaceView) {
+			glSurfaceViewWeakReference = new WeakReference<GLSurfaceView>(glSurfaceView);
 		}
 
 		@Override
 		public void handleMessage(Message msg) {
-			ImageTrackerActivity trackerActivity = trackerActivityWeakReference.get();
-			if (trackerActivity != null) {
-				ImageReader imageReader = trackerActivity.imageReader;
+			super.handleMessage(msg);
 
-				switch (msg.what) {
-					case 0:
-						if (trackerActivity.trackingReady) {
-							trackerActivity.glSurfaceView.requestRender();
-							sendEmptyMessageDelayed(0, 10);
-							return;
-						}
-
-						if (imageReader.hasNext()) {
-							int imageIndex = imageReader.getCurrentIndex();
-
-							byte[] fileBytes = imageReader.readFrame();
-
-							VidChaserRenderer.setImageIndex(imageIndex);
-							VidChaser.setTrackingImage(fileBytes, 12, trackerActivity.imageWidth, trackerActivity.imageHeight,
-									trackerActivity.imageFormat, imageIndex);
-							MaxstAR.setNewCameraFrame(fileBytes, 12, fileBytes.length - 12, trackerActivity.imageWidth, trackerActivity.imageHeight,
-									trackerActivity.imageFormat);
-						} else {
-							Log.i(TAG, "Image index arrived last");
-							Log.i(TAG, "Image index is : " + imageReader.getCurrentIndex());
-							imageReader.reset();
-							trackerActivity.progressDialog.dismiss();
-						}
-
-						sendEmptyMessageDelayed(0, 10);
-						trackerActivity.glSurfaceView.requestRender();
-						break;
-				}
+			GLSurfaceView glSurfaceView = glSurfaceViewWeakReference.get();
+			if (glSurfaceView != null) {
+				glSurfaceView.requestRender();
+				sendEmptyMessageDelayed(0, 30);
 			}
 		}
 	}

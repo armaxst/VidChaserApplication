@@ -4,15 +4,14 @@
 
 package com.maxst.vidchaser.app;
 
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
+
+import junit.framework.Assert;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 class VidChaserUtil {
 
@@ -31,4 +30,26 @@ class VidChaserUtil {
 	static final int TRACKING_METHOD_HOMOGRAPHY = 1;
 	static final int TRACKING_METHOD_RIGID = 2;
 	static final int TRACKING_METHOD_TRANSLATION = 3;
+
+	public static int byteArrayToInt(byte[] bytes, int start) {
+		Assert.assertTrue("Byte buffer length is not 4", (bytes.length - start) >= 4);
+		return	(bytes[start + 3] & 0xFF) << 24|
+				(bytes[start + 2] & 0xFF) << 16 |
+				(bytes[start + 1] & 0xFF) << 8 |
+				(bytes[start] & 0xFF);
+	}
+
+	static byte[] readImageBytesFromFile(String srcFile) {
+		File file = new File(srcFile);
+		int size = (int) file.length();
+		byte[] bytes = new byte[size];
+		try {
+			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+			buf.read(bytes, 0, bytes.length);
+			buf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bytes;
+	}
 }

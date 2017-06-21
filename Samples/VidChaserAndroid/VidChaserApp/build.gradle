@@ -1,6 +1,8 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 apply plugin: 'com.android.application'
+
+def VIDCHASER_SDK_DIR = '../../../Build'
+def NATIVE_LIB_DIR = 'lib/Android'
+def JAR_DIR = 'lib/Android'
 
 android {
 	compileSdkVersion 24
@@ -21,19 +23,24 @@ android {
 	}
 	sourceSets.main {
 		jni.srcDirs = []
-		jniLibs.srcDir 'libs'
+		jniLibs.srcDir "$VIDCHASER_SDK_DIR/$NATIVE_LIB_DIR"
 	}
-	task ndkBuild(type: Exec) {
-		if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-			commandLine 'ndk-build.cmd', '-C', file('./').absolutePath, 'UsePerformanceTest=no'
-		} else {
-			def ndkDir = android.ndkDirectory.getAbsolutePath();
-			commandLine ndkDir + "/ndk-build", '-C', file('./').absolutePath, 'UsePerformanceTest=no'
-		}
-	}
+	archivesBaseName = rootProject.projectDir.getName()
 
-	tasks.withType(JavaCompile) {
-		compileTask -> compileTask.dependsOn ndkBuild
+	buildTypes {
+		release {
+			minifyEnabled false
+			ndk {
+				abiFilters "armeabi-v7a"
+			}
+		}
+		debug {
+			minifyEnabled false
+			debuggable true
+			ndk {
+				abiFilters "armeabi-v7a"
+			}
+		}
 	}
 }
 
@@ -46,6 +53,5 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	compile 'gun0912.ted:tedpermission:1.0.0'
 	compile 'com.jakewharton:butterknife:7.0.1'
-	compile files('../../../build/lib/Android/MaxstAR.jar')
-	compile files('../../../build/lib/Android/VidChaser.jar')
+	compile files("$VIDCHASER_SDK_DIR/$JAR_DIR/VidChaser.jar")
 }

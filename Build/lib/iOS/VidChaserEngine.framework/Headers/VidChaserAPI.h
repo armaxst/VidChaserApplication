@@ -8,6 +8,8 @@
 
 #include "VidChaserResultCode.h"
 #include "VidChaserDefine.h"
+#include "CameraPreviewCallback.h"
+#include "MatrixUtil.h"
 #include <string>
 
 namespace VidChaser {
@@ -17,23 +19,33 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API char* getEngineVersion();
 
-    /**
-    * @brief init Engine Signature for iOS.
-    * @return result code.
-    */
-    VIDCHASER_API ResultCode init(std::string signature);
+   	VIDCHASER_API void startCamera(int cameraId, int width, int height, std::string extra = std::string());
+    
+    VIDCHASER_API void stopCamera();
+    
+    VIDCHASER_API void setPreviewCallback(CameraPreviewCallback callback);
+    
+    VIDCHASER_API void initRendering();
+    
+    VIDCHASER_API void updateRendering(int screenWidth, int screenHeight);
+    
+    VIDCHASER_API void setScreenOrientation(ScreenOrientation orientation);
+    
+    VIDCHASER_API void renderScene();
+    
+    VIDCHASER_API void deinitRendering();
     
 	/**
 	* @brief create Engine.
 	* @return result code.
 	*/
-	VIDCHASER_API ResultCode create();
+	VIDCHASER_API ResultCode create(std::string appSignature = "For_Mobile");
 
 	/**
 	* @brief Add tracking position(image coordinate).
 	* @param x tracking position x(pixel).
 	* @param y tracking position y(pixel).
-	* @param idx output tracking position index.
+	* @param idx output tracking point index.
 	* @param trackingMethod select tracking method.\n
 	*		0 : Affine transform.\n
 	*		1 : Homography transform.\n
@@ -41,14 +53,30 @@ namespace VidChaser {
 	*		3 : translation.\n
 	* @return result code.
 	*/
-	VIDCHASER_API ResultCode addTrackingPosition(int x, int y, int* idx, TrackingMethod trackingMethod = TrackingMethod::TRANSLATION);
+	VIDCHASER_API ResultCode addTrackingPoint(int x, int y, int* idx, TrackingMethod trackingMethod = TrackingMethod::TRANSLATION);
+
+	/**
+	* @brief activate tracking point
+	* @param x reset tracking position x(pixel).
+	* @param y reset tracking position y(pixel).
+	* @param idx tracking point index.
+	* return result code.
+	*/
+	VIDCHASER_API ResultCode activateTrackingPoint(int x, int y, int idx);
+    
+    /**
+     * @brief deactivate tracking point
+     * @param idx tracking point index.
+     * return result code.
+     */
+    VIDCHASER_API ResultCode deactivateTrackingPoint(int idx);
 
 	/**
 	* @brief Remove the tracking position of the corresponding input index.
 	* @param idx index you want to delete.
 	* @return result code.
 	*/
-	VIDCHASER_API ResultCode removeTrackingPosition(int idx);
+	VIDCHASER_API ResultCode removeTrackingPoint(int idx);
 
 	/**
 	* @brief start tracking using input image.
@@ -65,7 +93,7 @@ namespace VidChaser {
 	* @param imageIdx image index. if input image index equal to previous input image index, tracking logic don't track.
 	* @return result code.
 	*/
-	VIDCHASER_API ResultCode setTrackingImage(unsigned char* image, int width, int height, int colorFormat, long imageIdx);
+	VIDCHASER_API ResultCode setNewFrame(unsigned char* image, int length, int width, int height, int colorFormat, long imageIdx);
 
 	/**
 	* @brief get tracking result for the index.

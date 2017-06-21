@@ -11,23 +11,19 @@
 #import "Utils.h"
 
 #import "Sticker.h"
-#import "RendererAPI.h"
 #import "ProjectionMatrix.h"
 #import "CollectionViewCell.h"
 #import "PreferenceData.h"
 #import "Sticker.h"
+#import "ARManager.h"
 
 #import <vector>
 #import <VidChaserEngine/VidChaserAPI.h>
 #import <VidChaserEngine/VidChaserDefine.h>
-#import <VidChaserEngine/CoordiCvtUtil.h>
-#import <MaxstARAPI.h>
-
 
 @interface ImageTrackerViewController ()
 {
-    Renderer::Sticker *selectSticker;
-    CGSize screenSize;
+    Sticker *selectSticker;
     CGSize surfaceSize;
     
     NSArray *stickerArray;
@@ -39,19 +35,21 @@
     int imageHeight;
     int colorFormat;
     int length;
-    VidChaser::TrackingMethod trackingMethod;
+    TrackingMethod trackingMethod;
     
     bool trackingReady;
     
     float selectedGLX, selectedGLY;
     int touchStartX, touchStartY;
-    int selectedSticker;
     UILongPressGestureRecognizer *longTapGestureRecognizer;
     UITapGestureRecognizer *singleTapGestureRecognizer;
 }
+
+@property (weak, nonatomic) IBOutlet UIButton *backBtn;
+@property (weak, nonatomic) IBOutlet UIButton *stickerBtn;
 @property (weak, nonatomic) IBOutlet UILabel *indexText;
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (weak, nonatomic) IBOutlet UIView *removeview;
+@property (weak, nonatomic) IBOutlet UIView *trashbox;
 @property (weak, nonatomic) IBOutlet UIView *indicatorView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
 - (IBAction)ClickBackButton:(id)sender;
@@ -71,6 +69,12 @@
     view.drawableColorFormat = GLKViewDrawableColorFormatRGBA8888;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
 
+    self.backBtn.layer.cornerRadius = 10;
+    self.backBtn.layer.masksToBounds = YES;
+    
+    self.stickerBtn.layer.cornerRadius = 10;
+    self.stickerBtn.layer.masksToBounds = YES;
+    
     [self initValue];
     
     [self setupGL];
@@ -99,21 +103,18 @@
         length = imageWidth * imageHeight * 3;
     }
     
-    trackingMethod = (VidChaser::TrackingMethod)[[PreferenceData getInstance] getValue:PreKey::TRACKING];
+    trackingMethod = (TrackingMethod)[[PreferenceData getInstance] getValue:PreKey::TRACKING];
     
     self.indexText.text = [NSString stringWithFormat:@"000 / %d", imageReader->getLastIndex()];
     trackingReady = false;
     
-    stickerArray = [NSArray arrayWithObjects:@"Clipart.png", @"Flower.png", @"Heart.png", @"Rainbow.png", @"Smile.png", nil];
+    stickerArray = [NSArray arrayWithObjects:@"Arrow.png", @"Hand.png", @"Happy.png", @"Love.png", @"Smile.png", @"Sole.png", nil];
     
     CGRect rect = [[UIScreen mainScreen] bounds];
     surfaceSize = CGSizeMake(rect.size.width, rect.size.height);
     
     ProjectionMatrix::getInstance()->setSurfaceSize(surfaceSize.width, surfaceSize.height);
     
-    CGRect rectNative = [[UIScreen mainScreen] nativeBounds];
-    screenSize = CGSizeMake(rectNative.size.height, rectNative.size.width);
-
     [self.collectionView setDelegate:self];
     [self.collectionView setDataSource:self];
     [self.collectionView setHidden:YES];
@@ -122,8 +123,8 @@
     [self.indicatorView setHidden:YES];
     self.indicator.transform = CGAffineTransformMakeScale(2.5f, 2.5f);
     
-    self.removeview.alpha = 0.6f;
-    [self.removeview setHidden:YES];
+    self.trashbox.alpha = 0.6f;
+    [self.trashbox setHidden:YES];
     
     longTapGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap:)];
     [longTapGestureRecognizer setMinimumPressDuration:0.5];
@@ -134,10 +135,9 @@
     
     singleTapGestureRecognizer.numberOfTapsRequired = 1;
     [singleTapGestureRecognizer setCancelsTouchesInView:NO];
-    [self.collectionView addGestureRecognizer:singleTapGestureRecognizer];
-    [self.view addGestureRecognizer:singleTapGestureRecognizer];
     
-    selectedSticker = -1;
+    [self.collectionView addGestureRecognizer:singleTapGestureRecognizer];
+    
     selectSticker = nullptr;
 }
 
@@ -152,18 +152,16 @@
 
 - (void) startEngine
 {
-    maxstAR::initRendering();
-    Renderer::initRendering();
-    VidChaser::init("icWQYj5ucBSSl2DXHNVSTdDalq+Doh1uEfCs+kgITS8=");
-    int state = VidChaser::create();
+    int state = VidChaser::create("nqRhAU1Lb7liez+4hznvGRptML38NVkWrsd2UdN9hMw=");
     if(state != 0)
     {
         NSLog(@"Signature Error\n");
         return;
     }
     NSLog(@"Signature Success\n");
-    maxstAR::updateRendering(screenSize.width, screenSize.height);
-   
+    VidChaser::initRendering();
+    VidChaser::setNewFrame(nullptr, 0, 0, 0, (ColorFormat)colorFormat, 0);
+    VidChaser::updateRendering(surfaceSize.width, surfaceSize.height);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -179,36 +177,35 @@
 {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-    if(imageReader->getCurrentIndex() == 0)
+
+    self.indexText.text = [NSString stringWithFormat:@"%d / %d", imageReader->getCurrentIndex(), imageReader->getLastIndex()];
+    if(imageReader->hasNext())
+    {
+        glEnable(GL_DEPTH_TEST);
+        unsigned char *imageBuffer = imageReader->readFrame(trackingReady);
+        
+        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, (ColorFormat)colorFormat, imageReader->getCurrentIndex());
+        VidChaser::renderScene();
+
+        glDisable(GL_DEPTH_TEST);
+        [[ARManager getInstance] drawSticker : imageReader->getCurrentIndex()];
+        glEnable(GL_DEPTH_TEST);
+    }
+    else
     {
         if(self.indicatorView.hidden == false)
         {
             [self.indicator stopAnimating];
             [self.indicatorView setHidden:YES];
         }
-    }
-    
-    self.indexText.text = [NSString stringWithFormat:@"%d / %d", imageReader->getCurrentIndex(), imageReader->getLastIndex() - 1];
-    if(imageReader->hasNext())
-    {
-        unsigned char *imageBuffer = imageReader->readFrame(trackingReady);
-        
-        maxstAR::setNewFrame(imageBuffer, length, imageWidth, imageHeight, (ColorFormat)colorFormat);
-        maxstAR::renderScene();
-        VidChaser::setTrackingImage(imageBuffer, imageWidth, imageHeight, (ColorFormat)colorFormat, imageReader->getCurrentIndex());
-        Renderer::draw(imageReader->getCurrentIndex());
-    }
-    else
-    {
         imageReader->reset();
     }
 }
 
 - (IBAction)ClickBackButton:(id)sender {
-    maxstAR::deinitRendering();
+    VidChaser::deinitRendering();
     VidChaser::destroy();
-    Renderer::deinit();
+    [[ARManager getInstance] clear];
     [[self navigationController] popViewControllerAnimated:YES];
 }
 
@@ -235,59 +232,59 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    selectedSticker = (int)indexPath.row;
-    
-    NSString *stickerPath = [stickerArray objectAtIndex:selectedSticker];
+   NSString *stickerPath = [stickerArray objectAtIndex:(int)indexPath.row];
     
     UIImage * stickerImage = [UIImage imageNamed: stickerPath];
     
     unsigned char* stickerBuffer = [Utils imageToBytes:stickerImage];
     
-    Renderer::Sticker * sticker = Renderer::createSticker();
-    sticker->init();
+    Sticker * sticker = new Sticker();
     sticker->setTexture(stickerImage.size.width, stickerImage.size.height, stickerBuffer);
-    
     float ratio = stickerImage.size.width / (float) surfaceSize.width;
     float size = stickerImage.size.width * ratio;
     
     sticker->setScale(size, size, 1.0f);
     sticker->setTranslate(selectedGLX, selectedGLY, 0.0f);
-    Renderer::addSticker(sticker);
+    sticker->setProjectionMatrix(ProjectionMatrix::getInstance()->getProjectionMatrix());
+    
+    [[ARManager getInstance] addSticker:sticker];
+    
+    sticker = nullptr;
 
     selectedGLX = 0;
     selectedGLY = 0;
-    selectedSticker = -1;
     [self.collectionView setHidden:YES];
 }
 
 -(void) handleSingleTap:(UITapGestureRecognizer *)sender
 {
-    NSLog(@"Single Tap\n");
     CGPoint location = [sender locationInView:self.view];
     
     selectedGLX = 0.0f;
     selectedGLY = 0.0f;
     
-    CoordiCvtUtil::GetGLCoordiFromScreenCoordi(surfaceSize.width, surfaceSize.height,
+    MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
                                                imageWidth, imageHeight, location.x, location.y, selectedGLX, selectedGLY);
 }
 
 -(void) handleLongTap:(UITapGestureRecognizer *)sender
 {
+    [self.trashbox setHidden:YES];
+    self.trashbox.alpha = 0.6f;
+    
     CGPoint location = [sender locationInView:self.view];
     
     float glX = 0.0f;
     float glY = 0.0f;
     
-    CoordiCvtUtil::GetGLCoordiFromScreenCoordi(surfaceSize.width, surfaceSize.height,
+    MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
                                                imageWidth, imageHeight, location.x, location.y, glX, glY);
     
-    Renderer::Sticker *sticker = Renderer::getTouchedSticker(glX, glY);
-
+    selectSticker = [[ARManager getInstance] getTouchedSticker:glX :glY];
     int longtapStartX = 0;
     int longtapStartY = 0;
     
-    if(sticker == nullptr)
+    if(selectSticker == nullptr)
     {
         return;
     }
@@ -303,7 +300,7 @@
         {
             if(abs(touchStartX - location.x) > 5 || abs(touchStartY - location.y) > 5)
             {
-                sticker->setTranslate(glX, glY);
+                selectSticker->setTranslate(glX, glY);
                 
                 longtapStartX = location.x;
                 longtapStartY = location.y;
@@ -314,11 +311,13 @@
             [self.indicatorView setHidden:NO];
             [self.indicator startAnimating];
             
-            sticker->setTranslate(glX, glY);
-            sticker->startTracking(imageReader->getCurrentIndex(), imageReader->getLastIndex(), location.x, location.y, trackingMethod);
+            selectSticker->setTranslate(glX, glY);
+            
+            [[ARManager getInstance] startTracking:selectSticker :imageReader->getCurrentIndex() :imageReader->getLastIndex() :location.x :location.y :trackingMethod];
             
             longtapStartX = 0;
             longtapStartY = 0;
+            selectSticker = nullptr;
             
             imageReader->rewind();
             trackingReady = false;
@@ -334,11 +333,11 @@
     float glX = 0.0f;
     float glY = 0.0f;
     
-    CoordiCvtUtil::GetGLCoordiFromScreenCoordi(surfaceSize.width, surfaceSize.height,
-                                               imageWidth, imageHeight, location.x, location.y, glX, glY);
+    MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
+                                          imageWidth, imageHeight, location.x, location.y, glX, glY);
     
-    Renderer::Sticker *sticker = Renderer::getTouchedSticker(glX, glY);
-    if(sticker == nullptr)
+    selectSticker = [[ARManager getInstance] getTouchedSticker:glX :glY];
+    if(selectSticker == nullptr)
     {
         touchStartX = 0;
         touchStartY = 0;
@@ -346,8 +345,17 @@
     }
     else
     {
-        sticker->stopTracking();
-        selectSticker = sticker;
+        [self.trashbox setHidden:NO];
+        if(CGRectContainsPoint(self.trashbox.frame, location))
+        {
+            self.trashbox.alpha = 1.0f;
+        }
+        else
+        {
+            self.trashbox.alpha = 0.6f;
+        }
+        
+        [[ARManager getInstance] stopTracking:selectSticker];
         touchStartX = location.x;
         touchStartY = location.y;
     }
@@ -358,28 +366,17 @@
     UITouch *touch = [[event allTouches] anyObject];
     CGPoint location = [touch locationInView:touch.view];
 
-    float glX = 0.0f;
-    float glY = 0.0f;
-    
-    CoordiCvtUtil::GetGLCoordiFromScreenCoordi(surfaceSize.width, surfaceSize.height,
-                                               imageWidth, imageHeight, location.x, location.y, glX, glY);
-    
     if(selectSticker != nullptr)
     {
-        [self.removeview setHidden:NO];
-        if(CGRectContainsPoint(self.removeview.frame, location))
-        {
-            self.removeview.alpha = 1.0f;
-        }
-        else
-        {
-            self.removeview.alpha = 0.6f;
-        }
-        
         if(abs(touchStartX - location.x) > 5 || abs(touchStartY - location.y) > 5)
         {
-            selectSticker->setTranslate(glX, glY);
+            float glX = 0.0f;
+            float glY = 0.0f;
             
+            MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
+                                                       imageWidth, imageHeight, location.x, location.y, glX, glY);
+            
+            selectSticker->setTranslate(glX, glY);
             touchStartX = location.x;
             touchStartY = location.y;
         }
@@ -388,43 +385,24 @@
 
 - (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    if(selectSticker == nullptr)
+    {
+        return;
+    }
+    
     UITouch *touch = [[event allTouches] anyObject];
     CGPoint location = [touch locationInView:touch.view];
 
-    float glX = 0.0f;
-    float glY = 0.0f;
-    
-    CoordiCvtUtil::GetGLCoordiFromScreenCoordi(surfaceSize.width, surfaceSize.height,
-                                               imageWidth, imageHeight, location.x, location.y, glX, glY);
-    
-    if(selectSticker != nullptr)
+    if(CGRectContainsPoint(self.trashbox.frame, location))
     {
-        selectSticker->setTranslate(glX, glY);
-        if(CGRectContainsPoint(self.removeview.frame, location))
-        {
-            Renderer::removeSticker(selectSticker);
-        }
-        selectSticker = nullptr;
-        touchStartX = 0;
-        touchStartY = 0;
+        [[ARManager getInstance] removeSticker:selectSticker];
     }
-    else
-    {
-        Renderer::Sticker *sticker = Renderer::getTouchedSticker(glX, glY);
-        
-        if(sticker == nullptr)
-        {
-            return;
-        }
-        else
-        {
-            sticker->stopTracking();
-            sticker->setTranslate(glX, glY);
-        }
-    }
+    selectSticker = nullptr;
+    touchStartX = 0;
+    touchStartY = 0;
 
-    [self.removeview setHidden:YES];
-    self.removeview.alpha = 0.6f;
+    [self.trashbox setHidden:YES];
+    self.trashbox.alpha = 0.6f;
 }
 
 @end

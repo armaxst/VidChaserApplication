@@ -64,16 +64,16 @@
 
 - (void) initUI
 {
-    self.resolutionView.layer.cornerRadius = 5;
+    self.resolutionView.layer.cornerRadius = 20;
     self.resolutionView.layer.masksToBounds = YES;
 
-    self.colorFormatView.layer.cornerRadius = 5;
+    self.colorFormatView.layer.cornerRadius = 20;
     self.colorFormatView.layer.masksToBounds = YES;
     
-    self.methodView.layer.cornerRadius = 5;
+    self.methodView.layer.cornerRadius = 20;
     self.methodView.layer.masksToBounds = YES;
     
-    self.okBtn.layer.cornerRadius = 5;
+    self.okBtn.layer.cornerRadius = 10;
     self.okBtn.layer.masksToBounds = YES;
     
     resolutionButtonArray = [NSArray arrayWithObjects:self.resolution1Btn, self.resolution2Btn, self.resolution3Btn, nil];

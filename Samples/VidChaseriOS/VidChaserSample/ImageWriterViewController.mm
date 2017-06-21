@@ -10,7 +10,6 @@
 #import "PreferenceData.h"
 #import "Definitions.h"
 #import "Utils.h"
-#import <MaxstARAPI.h>
 #import <Accelerate/Accelerate.h>
 
 static bool isSaved = false;
@@ -22,10 +21,9 @@ static ColorFormat colorFormat;
 static unsigned char* imageBuffer;
 
 @interface ImageWriterViewController ()
+@property (weak, nonatomic) IBOutlet UIButton *backBtn;
 @property (weak, nonatomic) IBOutlet UIButton *startBtn;
-@property (weak, nonatomic) IBOutlet UIView *infoView;
 @property (weak, nonatomic) IBOutlet UILabel *stateText;
-@property (weak, nonatomic) IBOutlet UILabel *indexText;
 - (IBAction)ClickButton:(id)sender;
 - (IBAction)ClickBackButton:(id)sender;
 
@@ -46,9 +44,13 @@ static unsigned char* imageBuffer;
     [[PreferenceData getInstance] getResolution: imageWidth : imageHeight];
     colorFormat = [[PreferenceData getInstance] getColorFormat];
     
-    self.infoView.alpha = 0.5f;
-    self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@", imageWidth, imageHeight, ColorFormatValueString(colorFormat)];
-    self.indexText.text = @"000 / 300";
+    self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat)];
+    
+    self.backBtn.layer.cornerRadius = 10;
+    self.backBtn.layer.masksToBounds = YES;
+    
+    self.startBtn.layer.cornerRadius = 10;
+    self.startBtn.layer.masksToBounds = YES;
     
     [self setupGL];
     
@@ -58,7 +60,7 @@ static unsigned char* imageBuffer;
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    maxstAR::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
+    VidChaser::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
 }
 
 - (void)setupGL
@@ -87,12 +89,14 @@ static unsigned char* imageBuffer;
     glCullFace(GL_FRONT);
     glClearColor(0.0f, 0.0f, 0.0f, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    maxstAR::renderScene();
+    VidChaser::renderScene();
     
-    self.indexText.text = [NSString stringWithFormat:@"%03d / 300", frameIndex];
+    self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : %03d / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat), frameIndex];
+
+    
     if(isSaved == false)
     {
-        self.indexText.text = @"000 / 300";
+        self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat), frameIndex];
         [self.startBtn setTitle:@"START" forState:UIControlStateNormal];
     }
     
@@ -165,19 +169,20 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
 
 - (void)startEngine:(NSString*)path
 {
-    maxstAR::startCamera(0, imageWidth, imageHeight, std::string([path UTF8String]));
-    maxstAR::initRendering();
-    maxstAR::setPreviewCallback(onNewCameraFrame);
+    VidChaser::create("/D1ufge80KUp5yKJYbNKq3klEF9VxHeTaIbUZ7WZwRk=");
+    VidChaser::startCamera(0, imageWidth, imageHeight, std::string([path UTF8String]));
+    VidChaser::initRendering();
+    VidChaser::setPreviewCallback(onNewCameraFrame);
     
     float screenSizeWidth = self.view.bounds.size.width;
     float screenSizeHeight = self.view.bounds.size.height;
-    maxstAR::updateRendering(screenSizeWidth, screenSizeHeight);
+    VidChaser::updateRendering(screenSizeWidth, screenSizeHeight);
     [self setStatusBarOrientaionChange];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    maxstAR::updateRendering(size.width, size.height);
+    VidChaser::updateRendering(size.width, size.height);
     [self setOrientaionChange];
 }
 
@@ -185,19 +190,19 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
 {
     if(UIDevice.currentDevice.orientation == UIDeviceOrientationPortrait)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::PORTRAIT_UP);
+        VidChaser::setScreenOrientation(ScreenOrientation::PORTRAIT_UP);
     }
     else if(UIDevice.currentDevice.orientation == UIDeviceOrientationPortraitUpsideDown)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::PORTRAIT_DOWN);
+        VidChaser::setScreenOrientation(ScreenOrientation::PORTRAIT_DOWN);
     }
     else if(UIDevice.currentDevice.orientation == UIDeviceOrientationLandscapeLeft)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
+        VidChaser::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
     }
     else if(UIDevice.currentDevice.orientation == UIDeviceOrientationLandscapeRight)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::LANDSCAPE_RIGHT);
+        VidChaser::setScreenOrientation(ScreenOrientation::LANDSCAPE_RIGHT);
     }
 }
 
@@ -206,19 +211,19 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     if(orientation == UIInterfaceOrientationPortrait)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::PORTRAIT_UP);
+        VidChaser::setScreenOrientation(ScreenOrientation::PORTRAIT_UP);
     }
     else if(orientation == UIInterfaceOrientationPortraitUpsideDown)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::PORTRAIT_DOWN);
+        VidChaser::setScreenOrientation(ScreenOrientation::PORTRAIT_DOWN);
     }
     else if(orientation == UIInterfaceOrientationLandscapeLeft)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
+        VidChaser::setScreenOrientation(ScreenOrientation::LANDSCAPE_LEFT);
     }
     else if(orientation == UIInterfaceOrientationLandscapeRight)
     {
-        maxstAR::setScreenOrientation(ScreenOrientation::LANDSCAPE_RIGHT);
+        VidChaser::setScreenOrientation(ScreenOrientation::LANDSCAPE_RIGHT);
     }
 }
 
@@ -233,7 +238,7 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
     else
     {
         frameIndex = 0;
-        self.indexText.text = @"000 / 300";
+        self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat)];
         [self.startBtn setTitle:@"START" forState:UIControlStateNormal];
     }
 }
@@ -241,10 +246,10 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
 - (IBAction)ClickBackButton:(id)sender {
     isSaved = false;
     frameIndex = 0;
-    self.indexText.text = @"000 / 300";
+    self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat)];
     [self.startBtn setTitle:@"START" forState:UIControlStateNormal];
-    maxstAR::stopCamera();
-    maxstAR::deinitRendering();
+    VidChaser::deinitRendering();
+    VidChaser::stopCamera();
     [[self navigationController] popViewControllerAnimated:YES];
 }
 

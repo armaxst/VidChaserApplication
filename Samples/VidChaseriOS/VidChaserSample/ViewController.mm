@@ -10,12 +10,28 @@
 #import "PreferenceData.h"
 #import "ImageTrackerViewController.h"
 
+@interface ViewController()
+@property (weak, nonatomic) IBOutlet UIButton *writerBtn;
+@property (weak, nonatomic) IBOutlet UIButton *trackerBtn;
+@property (weak, nonatomic) IBOutlet UIButton *optionBtn;
+
+@end
+
 @implementation ViewController
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    self.writerBtn.layer.cornerRadius = 20;
+    self.writerBtn.layer.masksToBounds = YES;
+    
+    self.trackerBtn.layer.cornerRadius = 20;
+    self.trackerBtn.layer.masksToBounds = YES;
+    
+    self.optionBtn.layer.cornerRadius = 10;
+    self.optionBtn.layer.masksToBounds = YES;
     
     [[PreferenceData getInstance] initialize];
 }

@@ -7,7 +7,7 @@
 //
 
 #import <GLKit/GLKit.h>
-#import <MaxstARAPI.h>
+#import <VidChaserEngine/VidChaserAPI.h>
 
 @interface ImageWriterViewController : GLKViewController
 

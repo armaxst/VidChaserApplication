@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "Definitions.h"
-#import <MaxstARDef.h>
 #import <VidChaserEngine/VidChaserDefine.h>
 
 @interface PreferenceData : NSObject

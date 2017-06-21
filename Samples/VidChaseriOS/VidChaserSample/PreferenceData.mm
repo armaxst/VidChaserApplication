@@ -38,7 +38,7 @@ static PreferenceData *instance = nil;
         [defaults setObject:@"OK" forKey:PreKeyString(PreKey::INIT)];
         [defaults setInteger:ResolutionValue::Small forKey:PreKeyString(PreKey::RESOLUTION)];
         [defaults setInteger:ColorFormat::RGBA8888 forKey:PreKeyString(PreKey::COLORFORMAT)];
-        [defaults setInteger:VidChaser::TrackingMethod::RIGID forKey:PreKeyString(PreKey::TRACKING)];
+        [defaults setInteger:TrackingMethod::RIGID forKey:PreKeyString(PreKey::TRACKING)];
         [defaults synchronize];
     }
 }

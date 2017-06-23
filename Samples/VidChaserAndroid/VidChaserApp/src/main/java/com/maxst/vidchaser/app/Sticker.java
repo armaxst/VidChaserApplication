@@ -159,11 +159,9 @@ public class Sticker {
 				0, textureCoordBuff);
 		GLES20.glEnableVertexAttribArray(textureCoordHandle);
 
-		float[] transformTranspose = new float[16];
-		Matrix.transposeM(transformTranspose, 0, transform, 0);
 		Matrix.multiplyMM(modelMatrix, 0, scale, 0, rotation, 0);
 		Matrix.multiplyMM(modelMatrix, 0, translation, 0, modelMatrix, 0);
-		Matrix.multiplyMM(modelMatrix, 0, transformTranspose, 0, modelMatrix, 0);
+		Matrix.multiplyMM(modelMatrix, 0, transform, 0, modelMatrix, 0);
 
 		minX = (int) (modelMatrix[12] - scale[0] / 2);
 		maxX = (int) (modelMatrix[12] + scale[0] / 2);

@@ -59,14 +59,15 @@ public class Trackable {
 
 		if (trackingMode) {
 			float[] resultTransform3x3 = new float[9];
+			float[] transposed = new float[9];
 			float[] glTransform4x4 = new float[16];
 			int[] processTime = new int[1];
 
 			int result = VidChaserAPI.getTrackingResult(resultTransform3x3, trackableId, processTime);
-
 			if (result == 0) {
+				VidChaserAPI.transposeMatrix33F(resultTransform3x3, transposed);
 				VidChaserAPI.getTransformMatrix44F(ProjectionMatrix.getInstance().getImageWidth(), ProjectionMatrix.getInstance().getImageHeight(),
-						resultTransform3x3, glTransform4x4);
+						transposed, glTransform4x4);
 				transformRecord.put(currentImageIndex, glTransform4x4);
 			}
 

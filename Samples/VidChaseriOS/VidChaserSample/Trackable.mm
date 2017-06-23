@@ -8,6 +8,17 @@
 
 #import "Trackable.h"
 
+@interface Trackable()
+{
+    int trackableId;
+    int imageCoordX, imageCoordY;
+    map<int, gl_helper::Mat4> transformRecord;
+    int restartTrackingImageIndex;
+    bool trackingMode;
+}
+
+@end
+
 @implementation Trackable
 
 - (id) init
@@ -19,52 +30,52 @@
         imageCoordX = 0;
         imageCoordY = 0;
         transformRecord.clear();
-        touchIndex = -1;
-        lastIndex = -1;
+        restartTrackingImageIndex = -1;
         sticker = nullptr;
+        trackingMode = false;
     }
     return self;
 }
 
-- (void) start : (int) imageIndexWhenTouch : (int) lastImageIndex : (int) touchX : (int) touchY : (TrackingMethod) trackingMethod;
+- (void) start : (int) imageIndexWhenTouch : (int) touchX : (int) touchY : (TrackingMethod) trackingMethod;
 {
-    MatrixUtil::GetImageCoordFromScreenCoord(
-                                             ProjectionMatrix::getInstance()->getSurfaceWidth(),
+    MatrixUtil::GetImageCoordFromScreenCoord(ProjectionMatrix::getInstance()->getSurfaceWidth(),
                                              ProjectionMatrix::getInstance()->getSurfaceHeight(),
                                              ProjectionMatrix::getInstance()->getImageWidth(),
                                              ProjectionMatrix::getInstance()->getImageHeight(),
                                              touchX, touchY, imageCoordX, imageCoordY);
     
     VidChaser::addTrackingPoint(imageCoordX, imageCoordY, &trackableId, trackingMethod);
+    VidChaser::activateTrackingPoint(imageCoordX, imageCoordY, trackableId);
     
-    touchIndex = imageIndexWhenTouch;
-    lastIndex = lastImageIndex;
+    restartTrackingImageIndex = imageIndexWhenTouch;
+    trackingMode = true;
 }
 
-- (void) draw : (int) idx
+- (void) drawSticker:(int)idx
 {
-    if(idx == lastIndex)
+    if(trackableId < 0)
     {
-        VidChaser::deactivateTrackingPoint(trackableId);
-        trackableId = -1;
-        touchIndex = -1;
-        lastIndex = -1;
+        sticker->draw(gl_helper::Mat4::Identity());
+        return;
     }
     
-    if(idx == touchIndex)
+    if(!trackingMode && idx >= restartTrackingImageIndex)
     {
         VidChaser::activateTrackingPoint(imageCoordX, imageCoordY, trackableId);
+        trackingMode = true;
     }
     
-    if(trackableId != -1)
+    if(trackingMode)
     {
         int processTime = 0;
-        Matrix33F transformMatrix33F;
-        Matrix44F transformMatrix44F;
+        gl_helper::Mat3 transformMatrix33F;
+        gl_helper::Mat4 transformMatrix44F;
         
-        VidChaser::ResultCode temp = VidChaser::getTrackingResult(&transformMatrix33F.m[0][0], trackableId, &processTime);
+        VidChaser::ResultCode resultCode = VidChaser::getTrackingResult(transformMatrix33F.Ptr(), trackableId, &processTime);
+        transformMatrix33F.Transpose();
         
-        if(temp == VidChaser::ResultCode::SUCCESS)
+        if(resultCode == VidChaser::ResultCode::SUCCESS)
         {
             MatrixUtil::GetTransformMatrix44F(ProjectionMatrix::getInstance()->getImageWidth(),
                                               ProjectionMatrix::getInstance()->getImageHeight(),
@@ -72,18 +83,13 @@
             transformRecord[idx] = transformMatrix44F;
         }
         
-        if(touchIndex < idx)
+        if(restartTrackingImageIndex < idx)
         {
-            touchIndex = idx;
+            restartTrackingImageIndex = idx;
         }
     }
     
-    if(idx == 0)
-    {
-        VidChaser::deactivateTrackingPoint(trackableId);
-    }
-    
-    Matrix44F transform;
+    gl_helper::Mat4 transform;
     if(transformRecord.find(idx) != transformRecord.end())
     {
         transform = transformRecord[idx];
@@ -91,12 +97,21 @@
     sticker->draw(transform);
 }
 
+- (void) deactivateTrackingPoint
+{
+    if(trackableId >= 0)
+    {
+        VidChaser::deactivateTrackingPoint(trackableId);
+    }
+    trackingMode = false;
+}
+
 - (void) stop
 {
-    VidChaser::deactivateTrackingPoint(trackableId);
+    VidChaser::removeTrackingPoint(trackableId);
     trackableId = -1;
-    touchIndex = -1;
-    lastIndex = -1;
+    restartTrackingImageIndex = -1;
+    trackingMode = false;
     transformRecord.clear();
 }
 

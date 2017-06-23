@@ -9,7 +9,6 @@
 #include "VidChaserResultCode.h"
 #include "VidChaserDefine.h"
 #include "CameraPreviewCallback.h"
-#include "MatrixUtil.h"
 #include <string>
 
 namespace VidChaser {
@@ -19,20 +18,52 @@ namespace VidChaser {
 	*/
 	VIDCHASER_API char* getEngineVersion();
 
+    /**
+     * @brief start a #cameraId camera with width and height resolution
+     * @param cameraId camera hardware index(cameraId >= 0)
+     * @param width pixel unit camera image resolution width (width > 0)
+     * @param height pixel unit camera image resolution height (height > 0)
+     * @param extra when use video, set image path (optional)
+     */
    	VIDCHASER_API void startCamera(int cameraId, int width, int height, std::string extra = std::string());
     
+    /**
+     * @brief close the operating camera
+     */
     VIDCHASER_API void stopCamera();
     
+    /**
+     * @brief register callback using camera preview buffer
+     * @param callback preview callback
+     */
     VIDCHASER_API void setPreviewCallback(CameraPreviewCallback callback);
     
+    /**
+     * @brief initialize an internal resource for rendering
+     */
     VIDCHASER_API void initRendering();
-    
+
+    /**
+     * @brief input information necessary for calculating projection matrix
+     * @param screenWidth pixel unit screen resolution width (width > 0)
+     * @param screenHeight pixel unit screen resolution height (height > 0)
+     */
     VIDCHASER_API void updateRendering(int screenWidth, int screenHeight);
     
+    /**
+     * @brief set Screen Orientation
+     * @param orientation screen orientation
+     */
     VIDCHASER_API void setScreenOrientation(ScreenOrientation orientation);
     
+    /**
+     * @brief draw background Image.
+     */
     VIDCHASER_API void renderScene();
     
+    /**
+     * @brief deinitialize an internal resource for rendering
+     */
     VIDCHASER_API void deinitRendering();
     
 	/**

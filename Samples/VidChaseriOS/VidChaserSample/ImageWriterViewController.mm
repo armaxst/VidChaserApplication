@@ -96,7 +96,7 @@ static unsigned char* imageBuffer;
     
     if(isSaved == false)
     {
-        self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat), frameIndex];
+        self.stateText.text = [NSString stringWithFormat:@"%dX%d / %@ : 000 / 300", imageWidth, imageHeight, ColorFormatValueString(colorFormat)];
         [self.startBtn setTitle:@"START" forState:UIControlStateNormal];
     }
     

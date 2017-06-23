@@ -7,23 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "Definitions.h"
 
-class ImageReader
-{
-public:
-    ImageReader();
-    void setPath(NSString *path);
-    bool hasNext();
-    unsigned char* readFrame(bool isStopped);
-    void readImageInfo(int& width, int& height, int& pixelFormat);
-    int getCurrentIndex();
-    int getLastIndex();
-    void rewind();
-    void reset();
-private:
-    NSString *fileFolderPath;
-    NSArray *fileList;
-    int currentIndex;
-    bool isRewind;
-};
+@interface ImageReader : NSObject
+
+- (void) setPath : (NSString *) path;
+- (bool) hasNext;
+- (unsigned char *) readFrame : (bool) isStopped;
+- (void) readImageInfo : (int&) width : (int&) height : (int&) pixelFormat;
+- (int) getCurrentIndex;
+- (int) getLastIndex;
+- (void) rewind;
+- (void) reset;
+
+@end

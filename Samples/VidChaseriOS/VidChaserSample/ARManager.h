@@ -11,14 +11,13 @@
 
 @interface ARManager : NSObject
 
-+ (ARManager *) getInstance;
-
 - (Sticker *) getTouchedSticker : (int) touchX : (int) touchY;
 - (void) addSticker : (Sticker *) trackable;
-- (void) removeSticker : (Sticker *) sticker;
-- (void) startTracking : (Sticker *) sticker : (int) imageIndexWhenTouch : (int) lastImageIndex : (float) touchX : (float) touchY : (TrackingMethod) trackingMethod;
 - (void) drawSticker : (int) imageIndex;
+- (void) removeSticker : (Sticker *) sticker;
+- (void) startTracking : (Sticker *) sticker : (int) imageIndexWhenTouch : (float) touchX : (float) touchY : (TrackingMethod) trackingMethod;
 - (void) stopTracking : (Sticker *) sticker;
+- (void) deactivateAllTrackables;
 - (void) clear;
 
 @end

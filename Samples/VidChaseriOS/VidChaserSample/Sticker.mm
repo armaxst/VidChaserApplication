@@ -1,6 +1,6 @@
 /*
-* Copyright 2017 Maxst, Inc. All Rights Reserved.
-*/
+ * Copyright 2017 Maxst, Inc. All Rights Reserved.
+ */
 #include "Sticker.h"
 #include <iostream>
 
@@ -32,168 +32,172 @@ static const char stickerFragmentShader[] =
 
 float stickerVertices[] =
 {
-	-0.5f, 0.5f, 0.0f,   // top left
-	-0.5f, -0.5f, 0.0f,   // bottom left
-	0.5f, -0.5f, 0.0f,   // bottom right
-	0.5f, 0.5f, 0.0f  // top right
+    -0.5f, 0.5f, 0.0f,   // top left
+    -0.5f, -0.5f, 0.0f,   // bottom left
+    0.5f, -0.5f, 0.0f,   // bottom right
+    0.5f, 0.5f, 0.0f  // top right
 };
 
 unsigned char stickerIndices[] =
 {
-	0, 1, 2, 2, 3, 0
+    0, 1, 2, 2, 3, 0
 };
 
 float stickerTextureCoords[] =
 {
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f,
 };
 
 
 Sticker::Sticker()
 {
-	vertexBuff = stickerVertices;
-	indexBuff = stickerIndices;
-	textureCoordBuff = stickerTextureCoords;
+    vertexBuff = stickerVertices;
+    indexBuff = stickerIndices;
+    textureCoordBuff = stickerTextureCoords;
+    
+    scale = gl_helper::Mat4::Identity();
+    rotation = gl_helper::Mat4::Identity();
+    translation = gl_helper::Mat4::Identity();
+    projection = gl_helper::Mat4::Identity();
 }
 
 Sticker::~Sticker()
 {
-	if (textureData != nullptr)
-	{
-		delete[] textureData;
-		textureData = nullptr;
-	}
+    if (textureData != nullptr)
+    {
+        delete[] textureData;
+        textureData = nullptr;
+    }
 }
 
 void Sticker::init()
 {
-	initDone = false;
+    initDone = false;
 }
 
-void Sticker::setProjectionMatrix(const Matrix44F & projectionMatrix)
+void Sticker::setProjectionMatrix(const gl_helper::Mat4 & projectionMatrix)
 {
-	this->projection = projectionMatrix;
+    this->projection = projectionMatrix;
 }
 
 void Sticker::initGL()
 {
-	glProgram = ShaderUtil::createProgram(stickerVertexShader, stickerFragmentShader);
-	ShaderUtil::checkGlError("createProgram");
-
-	positionHandle = glGetAttribLocation(glProgram, "vertexPosition");
-	ShaderUtil::checkGlError("vertexPosition");
-
-	textureCoordHandle = glGetAttribLocation(glProgram, "vertexTexCoord");
-	ShaderUtil::checkGlError("vertexTexCoord");
-
-	mvpMatrixHandle = glGetUniformLocation(glProgram, "modelViewProjectionMatrix");
-	ShaderUtil::checkGlError("modelViewProjectionMatrix");
-
-	glGenTextures(1, &textureNames);
-	glBindTexture(GL_TEXTURE_2D, textureNames);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	textureHandle = glGetUniformLocation(glProgram, "s_texture_1");
-	ShaderUtil::checkGlError("glGetUniformLocation");
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+    glProgram = ShaderUtil::createProgram(stickerVertexShader, stickerFragmentShader);
+    ShaderUtil::checkGlError("createProgram");
+    
+    positionHandle = glGetAttribLocation(glProgram, "vertexPosition");
+    ShaderUtil::checkGlError("vertexPosition");
+    
+    textureCoordHandle = glGetAttribLocation(glProgram, "vertexTexCoord");
+    ShaderUtil::checkGlError("vertexTexCoord");
+    
+    mvpMatrixHandle = glGetUniformLocation(glProgram, "modelViewProjectionMatrix");
+    ShaderUtil::checkGlError("modelViewProjectionMatrix");
+    
+    glGenTextures(1, &textureNames);
+    glBindTexture(GL_TEXTURE_2D, textureNames);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    textureHandle = glGetUniformLocation(glProgram, "s_texture_1");
+    ShaderUtil::checkGlError("glGetUniformLocation");
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 }
 
 void Sticker::setTexture(int textureWidth, int textureHeight, unsigned char * rgba32TextureData)
 {
-	if (textureData == nullptr)
-	{
-		textureData = new unsigned char[textureWidth * textureHeight * 4];
-		memcpy(textureData, rgba32TextureData, textureWidth * textureHeight * 4);
-		this->textureWidth = textureWidth;
-		this->textureHeight = textureHeight;
-	}
+    if (textureData == nullptr)
+    {
+        textureData = new unsigned char[textureWidth * textureHeight * 4];
+        memcpy(textureData, rgba32TextureData, textureWidth * textureHeight * 4);
+        this->textureWidth = textureWidth;
+        this->textureHeight = textureHeight;
+    }
 }
 
-void Sticker::draw(Matrix44F matrix)
+void Sticker::draw(gl_helper::Mat4 inputTransformMatrix)
 {
-	if (!initDone)
-	{
-		initGL();
-		initDone = true;
-	}
-
-	glUseProgram(glProgram);
-	ShaderUtil::checkGlError("glUseProgram");
-
-	glVertexAttribPointer(positionHandle, 3, GL_FLOAT, GL_FALSE,
-		3 * sizeof(float), vertexBuff);
-	ShaderUtil::checkGlError("glVertexAttribPointer");
-
-	glEnableVertexAttribArray(positionHandle);
-	ShaderUtil::checkGlError("glEnableVertexAttribArray");
-
-	glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE,
-		2 * sizeof(float), textureCoordBuff);
-	ShaderUtil::checkGlError("glVertexAttribPointer 2");
-
-	glEnableVertexAttribArray(textureCoordHandle);
-	ShaderUtil::checkGlError("glEnableVertexAttribArray 2");
-
-	Matrix44F modelMatrix = translation * scale * rotation;
-	Matrix44F fullTransform = matrix * modelMatrix;
-	minX = fullTransform.m[0][3] - scale.m[0][0] / 2;
-	maxX = fullTransform.m[0][3] + scale.m[0][0] / 2;
-	minY = fullTransform.m[1][3] - scale.m[0][0] / 2;
-	maxY = fullTransform.m[1][3] + scale.m[0][0] / 2;
-
-	Matrix44F tempMvpMatrix; // = ProjectionMatrix::getInstance()->getProjectionMatrix();
-	tempMvpMatrix = projection * fullTransform;
-	tempMvpMatrix = tempMvpMatrix.Transpose();
-	glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, &tempMvpMatrix.m[0][0]);
-
-	ShaderUtil::checkGlError("glUniformMatrix4fv");
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(textureHandle, 0);
-	glBindTexture(GL_TEXTURE_2D, textureNames);
-
-	glDrawElements(GL_TRIANGLES, QUAD_IDX_BUFF_LENGTH,
-		GL_UNSIGNED_BYTE, indexBuff);
-
-	glDisableVertexAttribArray(positionHandle);
-	glDisableVertexAttribArray(textureCoordHandle);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
+    if (!initDone)
+    {
+        initGL();
+        initDone = true;
+    }
+    
+    glUseProgram(glProgram);
+    ShaderUtil::checkGlError("glUseProgram");
+    
+    glVertexAttribPointer(positionHandle, 3, GL_FLOAT, GL_FALSE,
+                          3 * sizeof(float), vertexBuff);
+    ShaderUtil::checkGlError("glVertexAttribPointer");
+    
+    glEnableVertexAttribArray(positionHandle);
+    ShaderUtil::checkGlError("glEnableVertexAttribArray");
+    
+    glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE,
+                          2 * sizeof(float), textureCoordBuff);
+    ShaderUtil::checkGlError("glVertexAttribPointer 2");
+    
+    glEnableVertexAttribArray(textureCoordHandle);
+    ShaderUtil::checkGlError("glEnableVertexAttribArray 2");
+    
+    gl_helper::Mat4 modelMatrix = translation * scale * rotation;
+    gl_helper::Mat4 fullTransform = inputTransformMatrix * modelMatrix;
+    
+    minX = fullTransform.Ptr()[12] - scale.Ptr()[0] / 2;
+    maxX = fullTransform.Ptr()[12] + scale.Ptr()[0] / 2;
+    minY = fullTransform.Ptr()[13] - scale.Ptr()[0] / 2;
+    maxY = fullTransform.Ptr()[13] + scale.Ptr()[0] / 2;
+    
+    gl_helper::Mat4 tempMvpMatrix = projection * fullTransform;
+    glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, tempMvpMatrix.Ptr());
+    
+    ShaderUtil::checkGlError("glUniformMatrix4fv");
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(textureHandle, 0);
+    glBindTexture(GL_TEXTURE_2D, textureNames);
+    
+    glDrawElements(GL_TRIANGLES, QUAD_IDX_BUFF_LENGTH,
+                   GL_UNSIGNED_BYTE, indexBuff);
+    
+    glDisableVertexAttribArray(positionHandle);
+    glDisableVertexAttribArray(textureCoordHandle);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Sticker::setScale(float x, float y, float z)
 {
-	scale.SetIdentity();
-	scale.Scale(x, y, z);
+    scale = gl_helper::Mat4::Identity();
+    scale = gl_helper::Mat4::Scale(x, y, z);
 }
 
 void Sticker::setTranslate(float x, float y, float z)
 {
-	translation.SetIdentity();
-	translation.Translate(x, y, z);
+    translation = gl_helper::Mat4::Identity();
+    translation = gl_helper::Mat4::Translation(x, y, z);
 }
 
 void Sticker::setRotation(float angle, float x, float y, float z)
 {
-	rotation.SetIdentity();
-	rotation.Rotate(angle, x, y, z);
+    rotation = gl_helper::Mat4::Identity();
+    rotation = rotation.PostRotate(angle, x, y, z);
 }
 
-bool Sticker::isTouched(int x, int y)
+bool Sticker::isTouched(int touchX, int touchY)
 {
-	Log("touch x:%d, y:%d", x, y);
-	Log("min x:%f, y:%f", minX, minY);
-	Log("max x:%f, y:%f", maxX, maxY);
-	return (x >= minX && x <= maxX && y >= minY && y <= maxY);
+    Log("touch x:%d, y:%d", touchX, touchY);
+    Log("min x:%f, y:%f", minX, minY);
+    Log("max x:%f, y:%f", maxX, maxY);
+    return (touchX >= minX && touchX <= maxX && touchY >= minY && touchY <= maxY);
 }

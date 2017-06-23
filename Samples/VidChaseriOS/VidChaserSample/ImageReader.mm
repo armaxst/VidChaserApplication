@@ -9,19 +9,35 @@
 #import "ImageReader.h"
 #import "Utils.h"
 
-ImageReader::ImageReader()
+@interface ImageReader()
 {
-    currentIndex = 0;
-    isRewind = false;
+    NSString *fileFolderPath;
+    NSArray *fileList;
+    int currentIndex;
+    bool isRewind;
+}
+@end
+
+@implementation ImageReader
+
+- (id) init
+{
+    self = [super init];
+    if(self)
+    {
+        currentIndex = 0;
+        isRewind = false;
+    }
+    return self;
 }
 
-void ImageReader::setPath(NSString *path)
+- (void) setPath:(NSString *)path
 {
     fileFolderPath = path;
     fileList = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 }
 
-bool ImageReader::hasNext()
+- (bool) hasNext
 {
     if(isRewind)
     {
@@ -33,7 +49,7 @@ bool ImageReader::hasNext()
     }
 }
 
-unsigned char* ImageReader::readFrame(bool isStopped)
+- (unsigned char *) readFrame:(bool)isStopped
 {
     NSString *fileFullPath = [NSString stringWithFormat:@"%@/%@", fileFolderPath, fileList[currentIndex]];
     NSData *imageFullData = [NSData dataWithContentsOfFile:fileFullPath];
@@ -54,7 +70,7 @@ unsigned char* ImageReader::readFrame(bool isStopped)
     return (unsigned char *) [imageRawData bytes];
 }
 
-void ImageReader::readImageInfo(int& width, int& height, int& pixelFormat)
+- (void) readImageInfo:(int &)width :(int &)height :(int &)pixelFormat
 {
     NSString *fileFullPath = [NSString stringWithFormat:@"%@/%@", fileFolderPath, fileList[0]];
     NSData *imageFullData = [NSData dataWithContentsOfFile:fileFullPath];
@@ -68,22 +84,22 @@ void ImageReader::readImageInfo(int& width, int& height, int& pixelFormat)
     pixelFormat = [Utils DataToInt:pixelFormatData];
 }
 
-int ImageReader::getCurrentIndex()
+- (int) getCurrentIndex
 {
     return currentIndex;
 }
 
-int ImageReader::getLastIndex()
+- (int) getLastIndex
 {
-    return (int)fileList.count;
+    return (int) fileList.count;
 }
 
-void ImageReader::rewind()
+- (void) rewind
 {
     isRewind = true;
 }
 
-void ImageReader::reset()
+- (void) reset
 {
     if(isRewind)
     {
@@ -91,4 +107,7 @@ void ImageReader::reset()
     }
     currentIndex = 0;
 }
+
+@end
+
 

@@ -12,9 +12,6 @@
 #import <VidChaserEngine/VidChaserAPI.h>
 #import <vector>
 
-static dispatch_once_t dis_one;
-static ARManager *instance = nil;
-
 @interface ARManager()
 {
     vector<Trackable *> trackableList;
@@ -22,14 +19,6 @@ static ARManager *instance = nil;
 @end
 
 @implementation ARManager
-
-+ (ARManager *) getInstance
-{
-    dispatch_once(&dis_one, ^{
-        instance = [[self alloc] init];
-    });
-    return instance;
-}
 
 - (id) init
 {
@@ -41,7 +30,7 @@ static ARManager *instance = nil;
     return self;
 }
 
-- (void) startTracking : (Sticker *) sticker : (int) imageIndexWhenTouch : (int) lastImageIndex : (float) touchX : (float) touchY : (TrackingMethod) trackingMethod
+- (void) startTracking : (Sticker *) sticker : (int) imageIndexWhenTouch : (float) touchX : (float) touchY : (TrackingMethod) trackingMethod
 {
     for (vector<Trackable *>::iterator itor = trackableList.begin();
          itor != trackableList.end();
@@ -49,18 +38,18 @@ static ARManager *instance = nil;
     {
         if((*itor)->sticker == sticker)
         {
-            [(*itor) start:imageIndexWhenTouch :lastImageIndex :touchX :touchY :trackingMethod];
+            [(*itor) start:imageIndexWhenTouch :touchX :touchY :trackingMethod];
         }
     }
 }
 
-- (void) drawSticker : (int) imageIndex
+- (void) deactivateAllTrackables
 {
     for (vector<Trackable *>::iterator itor = trackableList.begin();
          itor != trackableList.end();
          itor++)
     {
-        [(*itor) draw:imageIndex];
+        [(*itor) deactivateTrackingPoint];
     }
 }
 
@@ -73,6 +62,7 @@ static ARManager *instance = nil;
         if((*itor)->sticker == sticker)
         {
             [(*itor) stop];
+            break;
         }
     }
 }
@@ -82,6 +72,16 @@ static ARManager *instance = nil;
     Trackable *trackable = [[Trackable alloc] init];
     trackable->sticker = sticker;
     trackableList.push_back(trackable);
+}
+
+- (void) drawSticker : (int) imageIndex
+{
+    for (vector<Trackable *>::iterator itor = trackableList.begin();
+         itor != trackableList.end();
+         itor++)
+    {
+        [(*itor) drawSticker:imageIndex];
+    }
 }
 
 - (void) removeSticker : (Sticker *) sticker

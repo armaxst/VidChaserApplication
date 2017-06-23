@@ -30,6 +30,7 @@
     NSArray *stickerImages;
     
     ImageReader *imageReader;
+    ARManager *arManager;
     
     int imageWidth;
     int imageHeight;
@@ -84,13 +85,14 @@
 
 - (void) initValue
 {
-    imageReader = new ImageReader();
+    arManager = [[ARManager alloc] init];
+    imageReader = [[ImageReader alloc] init];
     
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *path = [documentsDirectory stringByAppendingString:@"/Images"];
     
-    imageReader->setPath(path);
-    imageReader->readImageInfo(imageWidth, imageHeight, colorFormat);
+    [imageReader setPath:path];
+    [imageReader readImageInfo :imageWidth :imageHeight :colorFormat];
     
     ProjectionMatrix::getInstance()->setImageSize(imageWidth, imageHeight);
     
@@ -105,7 +107,7 @@
     
     trackingMethod = (TrackingMethod)[[PreferenceData getInstance] getValue:PreKey::TRACKING];
     
-    self.indexText.text = [NSString stringWithFormat:@"000 / %d", imageReader->getLastIndex()];
+    self.indexText.text = [NSString stringWithFormat:@"000 / %d", [imageReader getLastIndex]];
     trackingReady = false;
     
     stickerArray = [NSArray arrayWithObjects:@"Arrow.png", @"Hand.png", @"Happy.png", @"Love.png", @"Smile.png", @"Sole.png", nil];
@@ -178,17 +180,17 @@
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    self.indexText.text = [NSString stringWithFormat:@"%d / %d", imageReader->getCurrentIndex(), imageReader->getLastIndex()];
-    if(imageReader->hasNext())
+    self.indexText.text = [NSString stringWithFormat:@"%d / %d", [imageReader getCurrentIndex], [imageReader getLastIndex]];
+    if([imageReader hasNext])
     {
         glEnable(GL_DEPTH_TEST);
-        unsigned char *imageBuffer = imageReader->readFrame(trackingReady);
+        unsigned char *imageBuffer = [imageReader readFrame: trackingReady];
         
-        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, (ColorFormat)colorFormat, imageReader->getCurrentIndex());
+        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
         VidChaser::renderScene();
 
         glDisable(GL_DEPTH_TEST);
-        [[ARManager getInstance] drawSticker : imageReader->getCurrentIndex()];
+        [arManager drawSticker:[imageReader getCurrentIndex]];
         glEnable(GL_DEPTH_TEST);
     }
     else
@@ -198,14 +200,19 @@
             [self.indicator stopAnimating];
             [self.indicatorView setHidden:YES];
         }
-        imageReader->reset();
+        
+        if([imageReader getCurrentIndex] == 0 || [imageReader getCurrentIndex] == [imageReader getLastIndex])
+        {
+            [arManager deactivateAllTrackables];
+        }
+        [imageReader reset];
     }
 }
 
 - (IBAction)ClickBackButton:(id)sender {
     VidChaser::deinitRendering();
     VidChaser::destroy();
-    [[ARManager getInstance] clear];
+    [arManager clear];
     [[self navigationController] popViewControllerAnimated:YES];
 }
 
@@ -247,7 +254,7 @@
     sticker->setTranslate(selectedGLX, selectedGLY, 0.0f);
     sticker->setProjectionMatrix(ProjectionMatrix::getInstance()->getProjectionMatrix());
     
-    [[ARManager getInstance] addSticker:sticker];
+    [arManager addSticker:sticker];
     
     sticker = nullptr;
 
@@ -280,7 +287,7 @@
     MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
                                                imageWidth, imageHeight, location.x, location.y, glX, glY);
     
-    selectSticker = [[ARManager getInstance] getTouchedSticker:glX :glY];
+    selectSticker = [arManager getTouchedSticker:glX :glY];
     int longtapStartX = 0;
     int longtapStartY = 0;
     
@@ -313,13 +320,13 @@
             
             selectSticker->setTranslate(glX, glY);
             
-            [[ARManager getInstance] startTracking:selectSticker :imageReader->getCurrentIndex() :imageReader->getLastIndex() :location.x :location.y :trackingMethod];
+            [arManager startTracking:selectSticker :[imageReader getCurrentIndex] :location.x :location.y :trackingMethod];
             
             longtapStartX = 0;
             longtapStartY = 0;
             selectSticker = nullptr;
             
-            imageReader->rewind();
+            [imageReader rewind];
             trackingReady = false;
         }
     }
@@ -336,7 +343,7 @@
     MatrixUtil::GetGLCoordFromScreenCoord(surfaceSize.width, surfaceSize.height,
                                           imageWidth, imageHeight, location.x, location.y, glX, glY);
     
-    selectSticker = [[ARManager getInstance] getTouchedSticker:glX :glY];
+    selectSticker = [arManager getTouchedSticker:glX :glY];
     if(selectSticker == nullptr)
     {
         touchStartX = 0;
@@ -355,7 +362,7 @@
             self.trashbox.alpha = 0.6f;
         }
         
-        [[ARManager getInstance] stopTracking:selectSticker];
+        [arManager stopTracking:selectSticker];
         touchStartX = location.x;
         touchStartY = location.y;
     }
@@ -395,7 +402,7 @@
 
     if(CGRectContainsPoint(self.trashbox.frame, location))
     {
-        [[ARManager getInstance] removeSticker:selectSticker];
+        [arManager removeSticker:selectSticker];
     }
     selectSticker = nullptr;
     touchStartX = 0;

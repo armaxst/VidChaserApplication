@@ -13,20 +13,17 @@ import java.util.HashMap;
 
 public class Trackable {
 
-	private int trackableId;
+	private int trackableId = -1;
 	private int imageCoordX, imageCoordY;
 	private HashMap<Integer, float[]> transformRecord;
-	private int imageIndexWhenTouch;
-	private int lastIndex;
+	private int restartTrackingImageIndex;
 	Sticker sticker;
+	private boolean trackingMode = false;
+	private float[] identityMatrix = new float[16];
 
 	public Trackable() {
-		trackableId = -1;
-		imageCoordX = 0;
-		imageCoordY = 0;
 		transformRecord = new HashMap<>();
-		imageIndexWhenTouch = -1;
-		lastIndex = -1;
+		Matrix.setIdentityM(identityMatrix, 0);
 	}
 
 	public Trackable(Sticker sticker) {
@@ -35,8 +32,7 @@ public class Trackable {
 	}
 
 	public void start(int imageIndexWhenTouch, int lastIndex, int screenX, int screenY, int trackingMethod) {
-		this.imageIndexWhenTouch = imageIndexWhenTouch;
-		this.lastIndex = lastIndex;
+		this.restartTrackingImageIndex = imageIndexWhenTouch;
 
 		int[] tempTrackableId = new int[1];
 		int [] imageCoords = new int[2];
@@ -47,21 +43,21 @@ public class Trackable {
 		this.imageCoordX = imageCoords[0];
 		this.imageCoordY = imageCoords[1];
 		this.trackableId = tempTrackableId[0];
+		trackingMode = true;
 	}
 
 	public void draw(int currentImageIndex) {
-		if (currentImageIndex == lastIndex) {
-			VidChaserAPI.deactivateTrackingPoint(trackableId);
-			trackableId = -1;
-			imageIndexWhenTouch = -1;
-			lastIndex = -1;
+		if (trackableId < 0) {
+			sticker.draw(identityMatrix);
+			return;
 		}
 
-		if (currentImageIndex == imageIndexWhenTouch) {
+		if (!trackingMode && currentImageIndex >= restartTrackingImageIndex) {
 			VidChaserAPI.activateTrackingPoint(imageCoordX, imageCoordY, trackableId);
+			trackingMode = true;
 		}
 
-		if (trackableId != -1) {
+		if (trackingMode) {
 			float[] resultTransform3x3 = new float[9];
 			float[] glTransform4x4 = new float[16];
 			int[] processTime = new int[1];
@@ -74,13 +70,9 @@ public class Trackable {
 				transformRecord.put(currentImageIndex, glTransform4x4);
 			}
 
-			if (imageIndexWhenTouch < currentImageIndex) {
-				imageIndexWhenTouch = currentImageIndex;
+			if (restartTrackingImageIndex < currentImageIndex) {
+				restartTrackingImageIndex = currentImageIndex;
 			}
-		}
-
-		if (currentImageIndex == 0) {
-			VidChaserAPI.deactivateTrackingPoint(trackableId);
 		}
 
 		float[] transform = new float[16];
@@ -92,10 +84,15 @@ public class Trackable {
 	}
 
 	public void stop() {
-		VidChaserAPI.deactivateTrackingPoint(trackableId);
+		VidChaserAPI.removeTrackingPoint(trackableId);
 		trackableId = -1;
-		imageIndexWhenTouch = -1;
-		lastIndex = -1;
 		transformRecord.clear();
+	}
+
+	public void deactivateTrackingPoint() {
+		if (trackableId >= 0) {
+			VidChaserAPI.deactivateTrackingPoint(trackableId);
+		}
+		trackingMode = false;
 	}
 }

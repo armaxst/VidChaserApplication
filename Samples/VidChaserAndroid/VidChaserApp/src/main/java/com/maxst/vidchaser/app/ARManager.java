@@ -8,15 +8,9 @@ import java.util.ArrayList;
 
 public class ARManager {
 
-	private static ARManager instance = new ARManager();
-
-	public static ARManager getInstance() {
-		return instance;
-	}
-
 	ArrayList<Trackable> trackableArrayList;
 
-	private ARManager() {
+	public ARManager() {
 		trackableArrayList = new ArrayList<>();
 	}
 
@@ -71,5 +65,11 @@ public class ARManager {
 
 	public void clear() {
 		trackableArrayList.clear();
+	}
+
+	public void deativateAllTrackingPoint() {
+		for (Trackable trackable : trackableArrayList) {
+			trackable.deactivateTrackingPoint();
+		}
 	}
 }

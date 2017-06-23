@@ -63,6 +63,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	boolean trackingReady = false;
 	Dialog progressDialog;
 	RenderHandler renderHandler;
+	ARManager arManager;
 
 	int trackingMethod;
 
@@ -123,7 +124,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		progressDialog.setContentView(R.layout.dialog_progress);
 		progressDialog.setCancelable(false);
 
-		ARManager.getInstance().clear();
+		arManager = new ARManager();
 
 		renderHandler = new RenderHandler(glSurfaceView);
 	}
@@ -182,7 +183,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 			float [] glCoord = new float[2];
 			VidChaserAPI.getGLCoordFromScreenCoord((int)e.getX(), (int)e.getY(), glCoord);
-			selectedSticker = ARManager.getInstance().getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
+			selectedSticker = arManager.getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
 			if (selectedSticker != null) {
 				trackingReady = true;
 				trashBox.setVisibility(View.GONE);
@@ -206,9 +207,9 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 				float [] glCoord = new float[2];
 				VidChaserAPI.getGLCoordFromScreenCoord((int)event.getX(), (int)event.getY(), glCoord);
 
-				selectedSticker = ARManager.getInstance().getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
+				selectedSticker = arManager.getTouchedSticker((int)glCoord[0], (int)glCoord[1]);
 				if (selectedSticker != null) {
-					ARManager.getInstance().stopTracking(selectedSticker);
+					arManager.stopTracking(selectedSticker);
 					trashBox.setVisibility(View.VISIBLE);
 				}
 				break;
@@ -234,7 +235,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					glSurfaceView.queueEvent(new Runnable() {
 						@Override
 						public void run() {
-							ARManager.getInstance().removeSticker(selectedSticker);
+							arManager.removeSticker(selectedSticker);
 							selectedSticker = null;
 						}
 					});
@@ -244,11 +245,12 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					imageReader.rewind();
 					progressDialog.show();
 					int imageIndexWhenTouch = imageReader.getCurrentIndex();
-					ARManager.getInstance().startTracking(selectedSticker, imageIndexWhenTouch,
+					arManager.deativateAllTrackingPoint();
+					arManager.startTracking(selectedSticker, imageIndexWhenTouch,
 							imageReader.getLastIndex(), (int)event.getX(), (int)event.getY(), trackingMethod);
 					trackingReady = false;
 				} else {
-					ARManager.getInstance().stopTracking(selectedSticker);
+					arManager.stopTracking(selectedSticker);
 				}
 		}
 		return true;
@@ -274,7 +276,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 					sticker.setTexture(texture.bitmap);
 					sticker.setScale(glStickerScale, glStickerScale, glStickerScale);
 					sticker.setTranslate(glCoords[0], glCoords[1], 0.0f);
-					ARManager.getInstance().addSticker(sticker);
+					arManager.addSticker(sticker);
 				}
 			});
 		}
@@ -285,7 +287,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		@Override
 		public void onRenderCallback() {
 			if (trackingReady) {
-				ARManager.getInstance().drawSticker(imageReader.getCurrentIndex());
+				arManager.drawSticker(imageReader.getCurrentIndex());
 				return;
 			}
 
@@ -296,6 +298,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 				VidChaserAPI.setNewFrame(fileBytes, 12, fileBytes.length - 12, imageWidth, imageHeight, imageFormat, imageIndex);
 			} else {
+				arManager.deativateAllTrackingPoint();
 				Log.i(TAG, "Image index arrived last");
 				Log.i(TAG, "Image index is : " + imageReader.getCurrentIndex());
 				imageReader.reset();
@@ -307,7 +310,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 				});
 			}
 
-			ARManager.getInstance().drawSticker(imageReader.getCurrentIndex());
+			arManager.drawSticker(imageReader.getCurrentIndex());
 		}
 	};
 

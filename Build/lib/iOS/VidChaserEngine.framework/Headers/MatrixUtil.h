@@ -95,18 +95,43 @@ public:
 	static void GetTransformMatrix44F(
 		int imageWidth, int imageHeight, gl_helper::Mat3 inputTransformMatrix33F, gl_helper::Mat4 & resultTransformMatrix44F)
 	{
-		gl_helper::Mat3 convertGLToImage = gl_helper::Mat3::Identity();
-		convertGLToImage.Ptr()[6] = imageWidth / 2.0f;
-		convertGLToImage.Ptr()[4] = -1.0f;
-		convertGLToImage.Ptr()[7] = imageHeight / 2.0f;
-
-		gl_helper::Mat3 convertImageToGL = gl_helper::Mat3::Identity();
-		convertImageToGL.Ptr()[6] = -imageWidth / 2.0f;
-		convertImageToGL.Ptr()[4] = -1.0f;
-		convertImageToGL.Ptr()[7] = imageHeight / 2.0f;
-
 		gl_helper::Mat3 fullTransform3x3;
-		fullTransform3x3 = convertImageToGL * inputTransformMatrix33F * convertGLToImage;
+		/*if (isPortrait = false) { //이부분 인자로 받아서 portrait 처리 해야함. 
+			//portrait
+			gl_helper::Mat3 convertGLToImage = gl_helper::Mat3::Zero();
+			convertGLToImage.Ptr()[1] = -1.0f;
+			convertGLToImage.Ptr()[3] = -1.0f;
+			convertGLToImage.Ptr()[6] = imageWidth / 2.0f;
+			convertGLToImage.Ptr()[7] = imageHeight / 2.0f;
+			convertGLToImage.Ptr()[8] = 1.0f;
+
+			gl_helper::Mat3 transformOrientation = gl_helper::Mat3::Zero();
+			transformOrientation.Ptr()[1] = 1.0f;
+			transformOrientation.Ptr()[3] = -1.0f;
+			transformOrientation.Ptr()[6] = imageHeight;
+			transformOrientation.Ptr()[8] = 1.0f;
+
+			gl_helper::Mat3 convertImageToGL = gl_helper::Mat3::Identity();
+			convertImageToGL.Ptr()[4] = -1.0f;
+			convertImageToGL.Ptr()[6] = -imageHeight / 2.0f;
+			convertImageToGL.Ptr()[7] = imageWidth / 2.0f;
+
+			fullTransform3x3 = convertImageToGL * transformOrientation * inputTransformMatrix33F * convertGLToImage;
+		}
+		else {*/
+			//landscape
+			gl_helper::Mat3 convertGLToImage = gl_helper::Mat3::Identity();
+			convertGLToImage.Ptr()[6] = imageWidth / 2.0f;
+			convertGLToImage.Ptr()[4] = -1.0f;
+			convertGLToImage.Ptr()[7] = imageHeight / 2.0f;
+
+			gl_helper::Mat3 convertImageToGL = gl_helper::Mat3::Identity();
+			convertImageToGL.Ptr()[6] = -imageWidth / 2.0f;
+			convertImageToGL.Ptr()[4] = -1.0f;
+			convertImageToGL.Ptr()[7] = imageHeight / 2.0f;
+
+			fullTransform3x3 = convertImageToGL * inputTransformMatrix33F * convertGLToImage;
+		//}
 
 		resultTransformMatrix44F.Ptr()[0] = fullTransform3x3.Ptr()[0] / fullTransform3x3.Ptr()[8];
 		resultTransformMatrix44F.Ptr()[1] = fullTransform3x3.Ptr()[1] / fullTransform3x3.Ptr()[8];
@@ -128,172 +153,4 @@ public:
 		resultTransformMatrix44F.Ptr()[14] = 0.0f;
 		resultTransformMatrix44F.Ptr()[15] = fullTransform3x3.Ptr()[8] / fullTransform3x3.Ptr()[8];
 	}
-
-	/*static void PerspectivePortraitUp(Matrix44F &result, int cameraWidth, int cameraHeight, int screenWidth, int screenHeight, float nearClipPlane, float farClipPlane)
-	{
-		float w = (float)cameraWidth;
-		float h = (float)cameraWidth * screenWidth / screenHeight;
-		float sr = (float)screenHeight / screenWidth;
-		float cr = (float)cameraWidth / cameraHeight;
-
-		float x = 0.0f;
-		float y = 0.0f;
-
-		if (sr < cr)
-		{
-			x = h / w * cr;
-			y = cr;
-		}
-		else
-		{
-			x = 1;
-			y = w / h;
-		}
-
-		result.m[0][0] = 0.0f;
-		result.m[0][1] = 2.0f * -x;
-		result.m[0][2] = 0.0f;
-		result.m[0][3] = 0.0f;
-
-		result.m[1][0] = 2.0f * -y;
-		result.m[1][1] = 0.0f;
-		result.m[1][2] = 0.0f;
-		result.m[1][3] = 0.0f;
-
-		result.m[2][0] = 0.0f;
-		result.m[2][1] = 0.0f;
-		result.m[2][2] = (farClipPlane + nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[2][3] = 1.0f;
-
-		result.m[3][0] = 0.0f;
-		result.m[3][1] = 0.0f;
-		result.m[3][2] = -(2.0f * farClipPlane * nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[3][3] = 0.0f;
-	}
-
-	static void PerspectivePortraitDown(Matrix44F &result, int cameraWidth, int cameraHeight, int screenWidth, int screenHeight, float nearClipPlane, float farClipPlane)
-	{
-		float w = (float)cameraWidth;
-		float h = (float)cameraWidth * screenWidth / screenHeight;
-		float sr = (float)screenHeight / screenWidth;
-		float cr = (float)cameraWidth / cameraHeight;
-
-		float x = 0.0f;
-		float y = 0.0f;
-
-		if (sr < cr)
-		{
-			x = h / w * cr;
-			y = cr;
-		}
-		else
-		{
-			x = 1;
-			y = w / h;
-		}
-
-		result.m[0][0] = 0.0f;
-		result.m[0][1] = 2.0f * x;
-		result.m[0][2] = 0.0f;
-		result.m[0][3] = 0.0f;
-
-		result.m[1][0] = 2.0f * y;
-		result.m[1][1] = 0.0f;
-		result.m[1][2] = 0.0f;
-		result.m[1][3] = 0.0f;
-
-		result.m[2][0] = 0.0f;
-		result.m[2][1] = 0.0f;
-		result.m[2][2] = (farClipPlane + nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[2][3] = 1.0f;
-
-		result.m[3][0] = 0.0f;
-		result.m[3][1] = 0.0f;
-		result.m[3][2] = -(2.0f * farClipPlane * nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[3][3] = 0.0f;
-	}
-
-	static void PerspectiveLandscapeLeft(Matrix44F &result, int cameraWidth, int cameraHeight, int screenWidth, int screenHeight, float nearClipPlane, float farClipPlane)
-	{
-		float w = (float)cameraWidth;
-		float h = (float)cameraWidth * screenHeight / screenWidth;
-		float sr = (float)screenWidth / screenHeight;
-		float cr = (float)cameraWidth / cameraHeight;
-
-		float x = 0.0f;
-		float y = 0.0f;
-
-		if (sr < cr)
-		{
-			x = h / w * cr;
-			y = cr;
-		}
-		else
-		{
-			x = 1;
-			y = w / h;
-		}
-
-		result.m[0][0] = 2.0f * x;
-		result.m[0][1] = 0.0f;
-		result.m[0][2] = 0.0f;
-		result.m[0][3] = 0.0f;
-
-		result.m[1][0] = 0.0f;
-		result.m[1][1] = 2.0f * -y;
-		result.m[1][2] = 0.0f;
-		result.m[1][3] = 0.0f;
-
-		result.m[2][0] = 0.0f;
-		result.m[2][1] = 0.0f;
-		result.m[2][2] = (farClipPlane + nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[2][3] = 1.0f;
-
-		result.m[3][0] = 0.0f;
-		result.m[3][1] = 0.0f;
-		result.m[3][2] = -(2.0f * farClipPlane * nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[3][3] = 0.0f;
-	}
-
-	static void PerspectiveLandscapeRight(Matrix44F &result, int cameraWidth, int cameraHeight, int screenWidth, int screenHeight, float nearClipPlane, float farClipPlane)
-	{
-		float w = (float)cameraWidth;
-		float h = (float)cameraWidth * screenHeight / screenWidth;
-		float sr = (float)screenWidth / screenHeight;
-		float cr = (float)cameraWidth / cameraHeight;
-
-		float x = 0.0f;
-		float y = 0.0f;
-
-		if (sr < cr)
-		{
-			x = h / w * cr;
-			y = cr;
-		}
-		else
-		{
-			x = 1;
-			y = w / h;
-		}
-
-		result.m[0][0] = 2.0f * -x;
-		result.m[0][1] = 0.0f;
-		result.m[0][2] = 0.0f;
-		result.m[0][3] = 0.0f;
-
-		result.m[1][0] = 0.0f;
-		result.m[1][1] = 2.0f * y;
-		result.m[1][2] = 0.0f;
-		result.m[1][3] = 0.0f;
-
-		result.m[2][0] = 0.0f;
-		result.m[2][1] = 0.0f;
-		result.m[2][2] = (farClipPlane + nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[2][3] = 1.0f;
-
-		result.m[3][0] = 0.0f;
-		result.m[3][1] = 0.0f;
-		result.m[3][2] = -(2.0f * farClipPlane * nearClipPlane) / (farClipPlane - nearClipPlane);
-		result.m[3][3] = 0.0f;
-	}*/
 };

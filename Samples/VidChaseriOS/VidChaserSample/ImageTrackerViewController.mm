@@ -162,7 +162,7 @@
     }
     NSLog(@"Signature Success\n");
     VidChaser::initRendering();
-    VidChaser::setNewFrame(nullptr, 0, 0, 0, (ColorFormat)colorFormat, 0);
+    VidChaser::setNewFrame(nullptr, 0, 0, 0, 0, (ColorFormat)colorFormat, 0);
     VidChaser::updateRendering(surfaceSize.width, surfaceSize.height);
 }
 
@@ -186,7 +186,7 @@
         glEnable(GL_DEPTH_TEST);
         unsigned char *imageBuffer = [imageReader readFrame: trackingReady];
         
-        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
+        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, imageWidth, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
         VidChaser::renderScene();
 
         glDisable(GL_DEPTH_TEST);

@@ -124,7 +124,7 @@ namespace VidChaser {
 	* @param imageIdx image index. if input image index equal to previous input image index, tracking logic don't track.
 	* @return result code.
 	*/
-	VIDCHASER_API ResultCode setNewFrame(unsigned char* image, int length, int width, int height, int colorFormat, long imageIdx);
+	VIDCHASER_API ResultCode setNewFrame(unsigned char* image, int length, int width, int height, int stride, int colorFormat, long imageIdx);
 
 	/**
 	* @brief get tracking result for the index.

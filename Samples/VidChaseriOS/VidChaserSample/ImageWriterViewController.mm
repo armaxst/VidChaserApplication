@@ -19,6 +19,7 @@ static int imageHeight = 0;
 static int frameIndex = 0;
 static ColorFormat colorFormat;
 static unsigned char* imageBuffer;
+static unsigned char* strideButter;
 
 @interface ImageWriterViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
@@ -132,11 +133,14 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
 
         NSMutableData *dstData = [[NSMutableData alloc] init];
         
+        int stride = width + 20;
+        
         if(colorFormat == ColorFormat::RGBA8888)
         {
             if(imageBuffer == nullptr)
             {
                 imageBuffer = (unsigned char *) malloc (width * height * 4);
+                strideButter = (unsigned char *) malloc (stride * height * 4);
             }
             
             for(int i = 0; i < width * height; ++i)
@@ -147,17 +151,62 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
                 imageBuffer[4 * i + 3] = 255.0f;
             }
             
+            int strideSize = (stride - width) * 4;
+            unsigned char *zeroBuffer = (unsigned char *) calloc (strideSize, sizeof(char));
+            
+            unsigned char *tempStride = strideButter;
+            unsigned char *tempImage = imageBuffer;
+            
+            for(int i = 0; i < height; ++i)
+            {
+                memcpy(tempStride, tempImage, sizeof(char) * width * 4);
+                memcpy(tempStride, zeroBuffer, sizeof(char) * strideSize);
+                tempImage += width * 4;
+                tempStride += stride * 4;
+            }
+            delete [] zeroBuffer;
+            
             [dstData appendBytes:[Utils intToByte:width] length:4];
             [dstData appendBytes:[Utils intToByte:height] length:4];
             [dstData appendBytes:[Utils intToByte:colorFormat] length:4];
-            [dstData appendBytes:imageBuffer length: width * height * 4];
+            [dstData appendBytes:[Utils intToByte:stride] length:4];
+            [dstData appendBytes:strideButter length: stride * height * 4];
         }
         else if(colorFormat == ColorFormat::RGB888)
         {
+            if(imageBuffer == nullptr)
+            {
+                imageBuffer = (unsigned char *) malloc (width * height * 3);
+                strideButter = (unsigned char *) malloc (stride * height * 3);
+            }
+            
+            for(int i = 0; i < width * height; ++i)
+            {
+                imageBuffer[3 * i] = data[3 * i];
+                imageBuffer[3 * i + 1] = data[3 * i + 1];
+                imageBuffer[3 * i + 2] = data[3 * i + 2];
+            }
+            
+            int strideSize = (stride - width) * 3;
+            unsigned char *zeroBuffer = (unsigned char *) calloc (strideSize, sizeof(char));
+            
+            unsigned char *tempStride = strideButter;
+            unsigned char *tempImage = imageBuffer;
+            
+            for(int i = 0; i < height; ++i)
+            {
+                memcpy(tempStride, tempImage, sizeof(char) * width * 3);
+                memcpy(tempStride, zeroBuffer, sizeof(char) * strideSize);
+                tempImage += width * 3;
+                tempStride += stride * 3;
+            }
+            delete [] zeroBuffer;
+            
             [dstData appendBytes:[Utils intToByte:width] length:4];
             [dstData appendBytes:[Utils intToByte:height] length:4];
             [dstData appendBytes:[Utils intToByte:colorFormat] length:4];
-            [dstData appendBytes:data length: width * height * 3];
+            [dstData appendBytes:[Utils intToByte:stride] length:4];
+            [dstData appendBytes:strideButter length: stride * height * 3];
         }
         
         NSString *filePullPath = [folderPath stringByAppendingString:filename];

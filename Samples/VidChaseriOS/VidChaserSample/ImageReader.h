@@ -15,7 +15,7 @@
 - (void) setPath : (NSString *) path;
 - (bool) hasNext;
 - (unsigned char *) readFrame : (bool) isStopped;
-- (void) readImageInfo : (int&) width : (int&) height : (int&) pixelFormat;
+- (void) readImageInfo : (int&) width : (int&) height : (int&) pixelFormat : (int&) stride;
 - (int) getCurrentIndex;
 - (int) getLastIndex;
 - (void) rewind;

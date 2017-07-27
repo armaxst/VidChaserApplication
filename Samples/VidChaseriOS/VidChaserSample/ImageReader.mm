@@ -53,7 +53,7 @@
 {
     NSString *fileFullPath = [NSString stringWithFormat:@"%@/%@", fileFolderPath, fileList[currentIndex]];
     NSData *imageFullData = [NSData dataWithContentsOfFile:fileFullPath];
-    NSData *imageRawData = [imageFullData subdataWithRange:NSMakeRange(12, imageFullData.length -12)];
+    NSData *imageRawData = [imageFullData subdataWithRange:NSMakeRange(16, imageFullData.length - 16)];
     
     if(isRewind)
     {
@@ -70,7 +70,7 @@
     return (unsigned char *) [imageRawData bytes];
 }
 
-- (void) readImageInfo:(int &)width :(int &)height :(int &)pixelFormat
+- (void) readImageInfo : (int&) width : (int&) height : (int&) pixelFormat : (int&) stride
 {
     NSString *fileFullPath = [NSString stringWithFormat:@"%@/%@", fileFolderPath, fileList[0]];
     NSData *imageFullData = [NSData dataWithContentsOfFile:fileFullPath];
@@ -78,10 +78,12 @@
     NSData *widthData  = [imageFullData subdataWithRange:NSMakeRange(0, 4)];
     NSData *heightData  = [imageFullData subdataWithRange:NSMakeRange(4, 4)];
     NSData *pixelFormatData  = [imageFullData subdataWithRange:NSMakeRange(8, 4)];
+    NSData *strideData  = [imageFullData subdataWithRange:NSMakeRange(12, 4)];
     
     width = [Utils DataToInt:widthData];
     height = [Utils DataToInt:heightData];
     pixelFormat = [Utils DataToInt:pixelFormatData];
+    stride = [Utils DataToInt:strideData];
 }
 
 - (int) getCurrentIndex

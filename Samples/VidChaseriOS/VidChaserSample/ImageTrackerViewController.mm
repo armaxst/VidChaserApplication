@@ -35,6 +35,7 @@
     int imageWidth;
     int imageHeight;
     int colorFormat;
+    int stride;
     int length;
     TrackingMethod trackingMethod;
     
@@ -92,7 +93,7 @@
     NSString *path = [documentsDirectory stringByAppendingString:@"/Images"];
     
     [imageReader setPath:path];
-    [imageReader readImageInfo :imageWidth :imageHeight :colorFormat];
+    [imageReader readImageInfo :imageWidth :imageHeight :colorFormat:stride];
     
     ProjectionMatrix::getInstance()->setImageSize(imageWidth, imageHeight);
     
@@ -186,7 +187,7 @@
         glEnable(GL_DEPTH_TEST);
         unsigned char *imageBuffer = [imageReader readFrame: trackingReady];
         
-        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, imageWidth, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
+        VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, stride, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
         VidChaser::renderScene();
 
         glDisable(GL_DEPTH_TEST);

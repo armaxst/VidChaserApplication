@@ -11,6 +11,9 @@
 #import "Definitions.h"
 #import "Utils.h"
 #import <Accelerate/Accelerate.h>
+#import <vector>
+
+using namespace std;
 
 static bool isSaved = false;
 static bool initialize = false;
@@ -19,7 +22,9 @@ static int imageHeight = 0;
 static int frameIndex = 0;
 static ColorFormat colorFormat;
 static unsigned char* imageBuffer;
-static unsigned char* strideButter;
+static unsigned char* strideBuffer;
+static vector<unsigned char> imageBuffers;
+static vector<unsigned char> strideBuffers;
 
 @interface ImageWriterViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
@@ -137,11 +142,15 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
         
         if(colorFormat == ColorFormat::RGBA8888)
         {
-            if(imageBuffer == nullptr)
+            int bufferSize = stride * height * 4;
+            if(strideBuffers.size() < bufferSize)
             {
-                imageBuffer = (unsigned char *) malloc (width * height * 4);
-                strideButter = (unsigned char *) malloc (stride * height * 4);
+                strideBuffers.resize(bufferSize);
+                imageBuffers.resize(bufferSize);
             }
+            
+            imageBuffer = &imageBuffers[0];
+            strideBuffer = &strideBuffers[0];
             
             for(int i = 0; i < width * height; ++i)
             {
@@ -154,7 +163,7 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
             int strideSize = (stride - width) * 4;
             unsigned char *zeroBuffer = (unsigned char *) calloc (strideSize, sizeof(char));
             
-            unsigned char *tempStride = strideButter;
+            unsigned char *tempStride = strideBuffer;
             unsigned char *tempImage = imageBuffer;
             
             for(int i = 0; i < height; ++i)
@@ -170,15 +179,19 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
             [dstData appendBytes:[Utils intToByte:height] length:4];
             [dstData appendBytes:[Utils intToByte:colorFormat] length:4];
             [dstData appendBytes:[Utils intToByte:stride] length:4];
-            [dstData appendBytes:strideButter length: stride * height * 4];
+            [dstData appendBytes:strideBuffer length: stride * height * 4];
         }
         else if(colorFormat == ColorFormat::RGB888)
         {
-            if(imageBuffer == nullptr)
+            int bufferSize = stride * height * 3;
+            if(strideBuffers.size() < bufferSize)
             {
-                imageBuffer = (unsigned char *) malloc (width * height * 3);
-                strideButter = (unsigned char *) malloc (stride * height * 3);
+                strideBuffers.resize(bufferSize);
+                imageBuffers.resize(bufferSize);
             }
+            
+            imageBuffer = &imageBuffers[0];
+            strideBuffer = &strideBuffers[0];
             
             for(int i = 0; i < width * height; ++i)
             {
@@ -190,7 +203,7 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
             int strideSize = (stride - width) * 3;
             unsigned char *zeroBuffer = (unsigned char *) calloc (strideSize, sizeof(char));
             
-            unsigned char *tempStride = strideButter;
+            unsigned char *tempStride = strideBuffer;
             unsigned char *tempImage = imageBuffer;
             
             for(int i = 0; i < height; ++i)
@@ -206,7 +219,7 @@ void onNewCameraFrame(Byte * data, int length, int width, int height, ColorForma
             [dstData appendBytes:[Utils intToByte:height] length:4];
             [dstData appendBytes:[Utils intToByte:colorFormat] length:4];
             [dstData appendBytes:[Utils intToByte:stride] length:4];
-            [dstData appendBytes:strideButter length: stride * height * 3];
+            [dstData appendBytes:strideBuffer length: stride * height * 3];
         }
         
         NSString *filePullPath = [folderPath stringByAppendingString:filename];

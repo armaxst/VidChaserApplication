@@ -58,6 +58,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	int imageWidth = 0;
 	int imageHeight = 0;
 	int imageFormat = 0;
+	int imageStride = 0;
 	GestureDetector gestureDetector;
 	DisplayMetrics displayMetrics;
 	boolean trackingReady = false;
@@ -91,11 +92,12 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		imageWidth = VidChaserUtil.byteArrayToInt(imageFileBytes, 0);
 		imageHeight = VidChaserUtil.byteArrayToInt(imageFileBytes, 4);
 		imageFormat = VidChaserUtil.byteArrayToInt(imageFileBytes, 8);
+		imageStride = VidChaserUtil.byteArrayToInt(imageFileBytes, 12);
 		ProjectionMatrix.getInstance().setImageSize(imageWidth, imageHeight);
 
 		imageReader.reset();
 
-		imageSizeTextView.setText("Image Size : " + imageWidth + "x" + imageHeight);
+		imageSizeTextView.setText("Image Size : " + imageWidth + "x" + imageHeight + "stride" + imageStride);
 
 		glSurfaceView.setEGLContextClientVersion(2);
 		glSurfaceView.setOnTouchListener(this);
@@ -296,7 +298,7 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 				byte[] fileBytes = imageReader.readFrame();
 
-				VidChaserAPI.setNewFrame(fileBytes, 12, fileBytes.length - 12, imageWidth, imageHeight, imageFormat, imageIndex);
+				VidChaserAPI.setNewFrame(fileBytes, 16, fileBytes.length - 16, imageWidth, imageHeight, imageStride, imageFormat, imageIndex);
 			} else {
 				arManager.deativateAllTrackingPoint();
 				Log.i(TAG, "Image index arrived last");

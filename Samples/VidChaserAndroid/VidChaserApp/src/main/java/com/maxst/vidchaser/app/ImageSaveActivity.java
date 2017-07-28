@@ -91,9 +91,8 @@ public class ImageSaveActivity extends Activity {
 		}
 
 		glSurfaceView.setRenderer(new VidChaserRenderer());
-		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-		VidChaserAPI.create(this, getResources().getString(R.string.app_free_key));
+		VidChaserAPI.create(getApplicationContext(), getResources().getString(R.string.app_free_key));
 		VidChaserAPI.setOnNewCameraFrameCallback(onNewCameraFrameCallback);
 
 		handlerThread = new HandlerThread("ImageSaveHandlerThread");
@@ -126,6 +125,12 @@ public class ImageSaveActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 
+		glSurfaceView.queueEvent(new Runnable() {
+			@Override
+			public void run() {
+				VidChaserAPI.deinitRendering();
+			}
+		});
 		glSurfaceView.onPause();
 		VidChaserAPI.stopCamera();
 
@@ -139,8 +144,6 @@ public class ImageSaveActivity extends Activity {
 		handlerThread.quit();
 		ButterKnife.unbind(this);
 		VidChaserAPI.destroy();
-
-		VidChaserAPI.deinitRendering();
 	}
 
 	private static final int MAX_FRAME_COUNT = 300;
@@ -201,7 +204,7 @@ public class ImageSaveActivity extends Activity {
 									System.arraycopy(sharedImageBuffer, 0, imageBufferForSave, 0, imageBufferLength);
 									imageCopyLock.unlock();
 								}
-								VidChaserAPI.saveCameraFrame(fileName, imageBufferForSave, imageBufferLength, imageWidth, imageHeight, imageSaveFormat, imageWidth + 50);
+								VidChaserAPI.saveCameraFrame(fileName, imageBufferForSave, imageBufferLength, imageWidth, imageHeight, imageWidth + 50, imageSaveFormat);
 								runOnUiThread(new Runnable() {
 									@Override
 									public void run() {

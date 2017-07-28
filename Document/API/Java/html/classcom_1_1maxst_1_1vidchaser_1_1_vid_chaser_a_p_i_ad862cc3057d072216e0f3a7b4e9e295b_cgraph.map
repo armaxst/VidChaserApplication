@@ -1,0 +1,7 @@
+<map id="com.maxst.vidchaser.VidChaserAPI.getImageCoordFromScreenCoord" name="com.maxst.vidchaser.VidChaserAPI.getImageCoordFromScreenCoord">
+<area shape="rect" id="node2" href="$classcom_1_1maxst_1_1vidchaser_1_1_projection_matrix.html#afb7c50dffd1d73e23680af04b5ba5a04" title="com.maxst.vidchaser.Projection\lMatrix.getInstance" alt="" coords="292,5,499,47"/>
+<area shape="rect" id="node3" href="$classcom_1_1maxst_1_1vidchaser_1_1_projection_matrix.html#a38b58ba2ddfd831dc86e6e92fb2fde10" title="com.maxst.vidchaser.Projection\lMatrix.getSurfaceWidth" alt="" coords="292,71,499,112"/>
+<area shape="rect" id="node4" href="$classcom_1_1maxst_1_1vidchaser_1_1_projection_matrix.html#a5db288183b110be0e8e403d90eed4a74" title="com.maxst.vidchaser.Projection\lMatrix.getSurfaceHeight" alt="" coords="292,136,499,177"/>
+<area shape="rect" id="node5" href="$classcom_1_1maxst_1_1vidchaser_1_1_projection_matrix.html#a1e07354294afffdb44a61c7b7659e1fa" title="com.maxst.vidchaser.Projection\lMatrix.getImageWidth" alt="" coords="292,201,499,243"/>
+<area shape="rect" id="node6" href="$classcom_1_1maxst_1_1vidchaser_1_1_projection_matrix.html#a72e65465d3d38d1ef4f6bf187e72bf71" title="com.maxst.vidchaser.Projection\lMatrix.getImageHeight" alt="" coords="292,267,499,308"/>
+</map>

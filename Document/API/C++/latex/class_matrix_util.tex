@@ -1,0 +1,58 @@
+\hypertarget{class_matrix_util}{}\section{Matrix\+Util Class Reference}
+\label{class_matrix_util}\index{Matrix\+Util@{Matrix\+Util}}
+
+
+{\ttfamily \#include $<$Matrix\+Util.\+h$>$}
+
+
+
+Collaboration diagram for Matrix\+Util\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{class_matrix_util__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{class_matrix_util_a8f1decb02c479ea6831e7baa7cf77a38}{Get\+Image\+Coord\+From\+Screen\+Coord} (int screen\+Width, int screen\+Height, int image\+Width, int image\+Height, int screenX, int screenY, int \&imageX, int \&imageY)
+\item 
+static void \hyperlink{class_matrix_util_a6d00d7dae3bb1c5b685adc3ea191e89e}{Get\+G\+L\+Coord\+From\+Screen\+Coord} (int screen\+Width, int screen\+Height, int image\+Width, int image\+Height, int screenX, int screenY, float \&glX, float \&glY)
+\item 
+static void \hyperlink{class_matrix_util_a2efb998ca1494b7c6c2887eaa4ca268f}{Get\+G\+L\+Coordinate\+From\+Touch\+Point} (int surface\+Width, int surface\+Height, int image\+Width, int image\+Height, int touchX, int touchY, float \&result\+G\+LX, float \&result\+G\+LY)
+\item 
+static void \hyperlink{class_matrix_util_a6a1d9aa13dc395bd7a8940ea6784b34e}{Get\+Transform\+Matrix44F} (int image\+Width, int image\+Height, gl\+\_\+helper\+::\+Mat3 input\+Transform\+Matrix33F, gl\+\_\+helper\+::\+Mat4 \&result\+Transform\+Matrix44F)
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_matrix_util_a6d00d7dae3bb1c5b685adc3ea191e89e}\label{class_matrix_util_a6d00d7dae3bb1c5b685adc3ea191e89e}} 
+\index{Matrix\+Util@{Matrix\+Util}!Get\+G\+L\+Coord\+From\+Screen\+Coord@{Get\+G\+L\+Coord\+From\+Screen\+Coord}}
+\index{Get\+G\+L\+Coord\+From\+Screen\+Coord@{Get\+G\+L\+Coord\+From\+Screen\+Coord}!Matrix\+Util@{Matrix\+Util}}
+\subsubsection{\texorpdfstring{Get\+G\+L\+Coord\+From\+Screen\+Coord()}{GetGLCoordFromScreenCoord()}}
+{\footnotesize\ttfamily static void Matrix\+Util\+::\+Get\+G\+L\+Coord\+From\+Screen\+Coord (\begin{DoxyParamCaption}\item[{int}]{screen\+Width,  }\item[{int}]{screen\+Height,  }\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{int}]{screenX,  }\item[{int}]{screenY,  }\item[{float \&}]{glX,  }\item[{float \&}]{glY }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_matrix_util_a2efb998ca1494b7c6c2887eaa4ca268f}\label{class_matrix_util_a2efb998ca1494b7c6c2887eaa4ca268f}} 
+\index{Matrix\+Util@{Matrix\+Util}!Get\+G\+L\+Coordinate\+From\+Touch\+Point@{Get\+G\+L\+Coordinate\+From\+Touch\+Point}}
+\index{Get\+G\+L\+Coordinate\+From\+Touch\+Point@{Get\+G\+L\+Coordinate\+From\+Touch\+Point}!Matrix\+Util@{Matrix\+Util}}
+\subsubsection{\texorpdfstring{Get\+G\+L\+Coordinate\+From\+Touch\+Point()}{GetGLCoordinateFromTouchPoint()}}
+{\footnotesize\ttfamily static void Matrix\+Util\+::\+Get\+G\+L\+Coordinate\+From\+Touch\+Point (\begin{DoxyParamCaption}\item[{int}]{surface\+Width,  }\item[{int}]{surface\+Height,  }\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{int}]{touchX,  }\item[{int}]{touchY,  }\item[{float \&}]{result\+G\+LX,  }\item[{float \&}]{result\+G\+LY }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_matrix_util_a8f1decb02c479ea6831e7baa7cf77a38}\label{class_matrix_util_a8f1decb02c479ea6831e7baa7cf77a38}} 
+\index{Matrix\+Util@{Matrix\+Util}!Get\+Image\+Coord\+From\+Screen\+Coord@{Get\+Image\+Coord\+From\+Screen\+Coord}}
+\index{Get\+Image\+Coord\+From\+Screen\+Coord@{Get\+Image\+Coord\+From\+Screen\+Coord}!Matrix\+Util@{Matrix\+Util}}
+\subsubsection{\texorpdfstring{Get\+Image\+Coord\+From\+Screen\+Coord()}{GetImageCoordFromScreenCoord()}}
+{\footnotesize\ttfamily static void Matrix\+Util\+::\+Get\+Image\+Coord\+From\+Screen\+Coord (\begin{DoxyParamCaption}\item[{int}]{screen\+Width,  }\item[{int}]{screen\+Height,  }\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{int}]{screenX,  }\item[{int}]{screenY,  }\item[{int \&}]{imageX,  }\item[{int \&}]{imageY }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_matrix_util_a6a1d9aa13dc395bd7a8940ea6784b34e}\label{class_matrix_util_a6a1d9aa13dc395bd7a8940ea6784b34e}} 
+\index{Matrix\+Util@{Matrix\+Util}!Get\+Transform\+Matrix44F@{Get\+Transform\+Matrix44F}}
+\index{Get\+Transform\+Matrix44F@{Get\+Transform\+Matrix44F}!Matrix\+Util@{Matrix\+Util}}
+\subsubsection{\texorpdfstring{Get\+Transform\+Matrix44\+F()}{GetTransformMatrix44F()}}
+{\footnotesize\ttfamily static void Matrix\+Util\+::\+Get\+Transform\+Matrix44F (\begin{DoxyParamCaption}\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{gl\+\_\+helper\+::\+Mat3}]{input\+Transform\+Matrix33F,  }\item[{gl\+\_\+helper\+::\+Mat4 \&}]{result\+Transform\+Matrix44F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Workspace/\+Vid\+Chaser/\+Vid\+Chaser/include/\hyperlink{_matrix_util_8h}{Matrix\+Util.\+h}\end{DoxyCompactItemize}

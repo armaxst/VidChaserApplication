@@ -63,7 +63,6 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 	DisplayMetrics displayMetrics;
 	boolean trackingReady = false;
 	Dialog progressDialog;
-	RenderHandler renderHandler;
 	ARManager arManager;
 
 	int trackingMethod;
@@ -102,9 +101,8 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		glSurfaceView.setEGLContextClientVersion(2);
 		glSurfaceView.setOnTouchListener(this);
 		glSurfaceView.setRenderer(new VidChaserRenderer(renderingCallback));
-		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-		VidChaserAPI.create(this, getResources().getString(R.string.app_pro_key));
+		VidChaserAPI.create(getApplicationContext(), getResources().getString(R.string.app_pro_key));
 
 		try {
 			String[] textureFiles = getAssets().list("Sticker");
@@ -127,23 +125,24 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 		progressDialog.setCancelable(false);
 
 		arManager = new ARManager();
-
-		renderHandler = new RenderHandler(glSurfaceView);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		glSurfaceView.onResume();
-
-		renderHandler.sendEmptyMessage(0);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		renderHandler.removeCallbacksAndMessages(null);
+		glSurfaceView.queueEvent(new Runnable() {
+			@Override
+			public void run() {
+				VidChaserAPI.deinitRendering();
+			}
+		});
 		glSurfaceView.onPause();
 	}
 
@@ -153,7 +152,6 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 		ButterKnife.unbind(this);
 		VidChaserAPI.destroy();
-		VidChaserAPI.deinitRendering();
 	}
 
 	@OnClick(R.id.show_sticker_list)
@@ -315,24 +313,4 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 			arManager.drawSticker(imageReader.getCurrentIndex());
 		}
 	};
-
-	private static class RenderHandler extends Handler {
-
-		private WeakReference<GLSurfaceView> glSurfaceViewWeakReference;
-
-		RenderHandler(GLSurfaceView glSurfaceView) {
-			glSurfaceViewWeakReference = new WeakReference<GLSurfaceView>(glSurfaceView);
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-
-			GLSurfaceView glSurfaceView = glSurfaceViewWeakReference.get();
-			if (glSurfaceView != null) {
-				glSurfaceView.requestRender();
-				sendEmptyMessageDelayed(0, 30);
-			}
-		}
-	}
 }

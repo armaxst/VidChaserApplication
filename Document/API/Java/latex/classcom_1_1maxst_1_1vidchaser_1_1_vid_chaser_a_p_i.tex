@@ -1,0 +1,294 @@
+\hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i}{}\section{com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+PI Class Reference}
+\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i}\index{com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+PI@{com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+PI}}
+
+
+Collaboration diagram for com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+PI\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=253pt]{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static String \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a0a384a71903aca04dad7ae5a7b641da9}{get\+Engine\+Version} ()
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa9a6cbc276431f56d11509c22c640749}{create} (Context context, String app\+Key)
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a39767b1ffd8a00d529d3183a00dd45b3}{add\+Tracking\+Point} (int imageX, int imageY, int \mbox{[}$\,$\mbox{]} trackable\+Id, int tracking\+Method)
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a52b3b148426377d86b7e3985ca4625fe}{remove\+Tracking\+Point} (int trackable\+Id)
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a70d462cf63aa4c014a0cc42f3af9f3d4}{activate\+Tracking\+Point} (int imageX, int imageY, int index)
+\begin{DoxyCompactList}\small\item\em activate tracking point(index) \end{DoxyCompactList}\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a36952cb46625a4a4ee0fa7183fbf03b1}{deactivate\+Tracking\+Point} (int index)
+\begin{DoxyCompactList}\small\item\em deactivate tracking point(index) \end{DoxyCompactList}\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af391e17e712749adbb5bfee2b762d941}{set\+New\+Frame} (byte\mbox{[}$\,$\mbox{]} image\+Data, int start\+Offset, int length, int image\+Width, int image\+Height, int stride, int image\+Format, int image\+Index)
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa7555cd0125d9d7e3c2d3eae519ce1b0}{get\+Tracking\+Result} (float \mbox{[}$\,$\mbox{]} result, int trackable\+Id, int\mbox{[}$\,$\mbox{]} process\+Time)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a7883ba1837bd5c3f84ec45ca66414b05}{transpose\+Matrix33F} (float \mbox{[}$\,$\mbox{]} in, float \mbox{[}$\,$\mbox{]} out)
+\item 
+static int \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89080c8433fe0a5361f5ca660908b183}{destroy} ()
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ad862cc3057d072216e0f3a7b4e9e295b}{get\+Image\+Coord\+From\+Screen\+Coord} (int screenX, int screenY, int\mbox{[}$\,$\mbox{]} image\+Coord)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a023777164b60f04666b2e5b718580e03}{get\+G\+L\+Coord\+From\+Screen\+Coord} (int screenX, int screenY, float\mbox{[}$\,$\mbox{]} gl\+Coord)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a289c720643c1f900f956f2589a619871}{get\+Transform\+Matrix44F} (int image\+Width, int image\+Height, float\mbox{[}$\,$\mbox{]} transform\+Matrix33F, float\mbox{[}$\,$\mbox{]} transform\+Matrix44F)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89cea03eb38771648663da04950aaec5}{set\+On\+New\+Camera\+Frame\+Callback} (\hyperlink{interfacecom_1_1maxst_1_1vidchaser_1_1_on_new_camera_frame_callback}{On\+New\+Camera\+Frame\+Callback} callback)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a80334a0ee1380fddc6a469facee88492}{save\+Camera\+Frame} (String file\+Name, byte \mbox{[}$\,$\mbox{]} data, int length, int width, int height, int stride, int save\+Color\+Format)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab4f43383db7d47da64c1c2b9ab8167ac}{start\+Camera} (int camera\+Id, int width, int height)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af7092d1f3dcca228cb6a45f263e35120}{stop\+Camera} ()
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af4e7ca30f3836348d7f5a2b375a25d28}{init\+Redering} ()
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a72fa4502f5dcc8d1e765167be9a05cae}{update\+Rendering} (int width, int height)
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a8a695391dde4caec8e85e5355769e202}{render\+Scene} ()
+\item 
+static void \hyperlink{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab9d7cb7188771fac801aa2e9aefc6a83}{deinit\+Rendering} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a70d462cf63aa4c014a0cc42f3af9f3d4}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a70d462cf63aa4c014a0cc42f3af9f3d4}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!activate\+Tracking\+Point@{activate\+Tracking\+Point}}
+\index{activate\+Tracking\+Point@{activate\+Tracking\+Point}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{activate\+Tracking\+Point()}{activateTrackingPoint()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+activate\+Tracking\+Point (\begin{DoxyParamCaption}\item[{int}]{imageX,  }\item[{int}]{imageY,  }\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+activate tracking point(index) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em imageX} & reset tracking position x(pixel). \\
+\hline
+{\em imageY} & reset tracking position y(pixel). \\
+\hline
+{\em index} & tracking point index that will be changed status. return result code. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a39767b1ffd8a00d529d3183a00dd45b3}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a39767b1ffd8a00d529d3183a00dd45b3}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!add\+Tracking\+Point@{add\+Tracking\+Point}}
+\index{add\+Tracking\+Point@{add\+Tracking\+Point}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{add\+Tracking\+Point()}{addTrackingPoint()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+add\+Tracking\+Point (\begin{DoxyParamCaption}\item[{int}]{imageX,  }\item[{int}]{imageY,  }\item[{int \mbox{[}$\,$\mbox{]}}]{trackable\+Id,  }\item[{int}]{tracking\+Method }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Add tracking point on Image coordinate.
+
+
+\begin{DoxyParams}{Parameters}
+{\em imageX} & X position on Image coordinate \\
+\hline
+{\em imageY} & Y position on Image coordinate \\
+\hline
+{\em trackable\+Id} & trackable\+Id container which is created by Vid\+Chaser engine \\
+\hline
+{\em tracking\+Method} & Tracking method index \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Return result code 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa9a6cbc276431f56d11509c22c640749}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa9a6cbc276431f56d11509c22c640749}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!create@{create}}
+\index{create@{create}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+create (\begin{DoxyParamCaption}\item[{Context}]{context,  }\item[{String}]{app\+Key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Initialize tracker.
+
+
+\begin{DoxyParams}{Parameters}
+{\em context} & Application context \\
+\hline
+{\em app\+Key} & App license key \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Return result code 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a36952cb46625a4a4ee0fa7183fbf03b1}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a36952cb46625a4a4ee0fa7183fbf03b1}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!deactivate\+Tracking\+Point@{deactivate\+Tracking\+Point}}
+\index{deactivate\+Tracking\+Point@{deactivate\+Tracking\+Point}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{deactivate\+Tracking\+Point()}{deactivateTrackingPoint()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+deactivate\+Tracking\+Point (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+deactivate tracking point(index) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & tracking point index that will be changed status. return result code. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab9d7cb7188771fac801aa2e9aefc6a83}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab9d7cb7188771fac801aa2e9aefc6a83}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!deinit\+Rendering@{deinit\+Rendering}}
+\index{deinit\+Rendering@{deinit\+Rendering}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{deinit\+Rendering()}{deinitRendering()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+deinit\+Rendering (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89080c8433fe0a5361f5ca660908b183}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89080c8433fe0a5361f5ca660908b183}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!destroy@{destroy}}
+\index{destroy@{destroy}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{destroy()}{destroy()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Destroy tracker engine. \begin{DoxyReturn}{Returns}
+Return result code 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a0a384a71903aca04dad7ae5a7b641da9}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a0a384a71903aca04dad7ae5a7b641da9}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!get\+Engine\+Version@{get\+Engine\+Version}}
+\index{get\+Engine\+Version@{get\+Engine\+Version}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{get\+Engine\+Version()}{getEngineVersion()}}
+{\footnotesize\ttfamily static String com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+get\+Engine\+Version (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Get tracker version.
+
+\begin{DoxyReturn}{Returns}
+Engine version. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a023777164b60f04666b2e5b718580e03}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a023777164b60f04666b2e5b718580e03}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!get\+G\+L\+Coord\+From\+Screen\+Coord@{get\+G\+L\+Coord\+From\+Screen\+Coord}}
+\index{get\+G\+L\+Coord\+From\+Screen\+Coord@{get\+G\+L\+Coord\+From\+Screen\+Coord}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{get\+G\+L\+Coord\+From\+Screen\+Coord()}{getGLCoordFromScreenCoord()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+get\+G\+L\+Coord\+From\+Screen\+Coord (\begin{DoxyParamCaption}\item[{int}]{screenX,  }\item[{int}]{screenY,  }\item[{float \mbox{[}$\,$\mbox{]}}]{gl\+Coord }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a023777164b60f04666b2e5b718580e03_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ad862cc3057d072216e0f3a7b4e9e295b}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ad862cc3057d072216e0f3a7b4e9e295b}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!get\+Image\+Coord\+From\+Screen\+Coord@{get\+Image\+Coord\+From\+Screen\+Coord}}
+\index{get\+Image\+Coord\+From\+Screen\+Coord@{get\+Image\+Coord\+From\+Screen\+Coord}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{get\+Image\+Coord\+From\+Screen\+Coord()}{getImageCoordFromScreenCoord()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+get\+Image\+Coord\+From\+Screen\+Coord (\begin{DoxyParamCaption}\item[{int}]{screenX,  }\item[{int}]{screenY,  }\item[{int \mbox{[}$\,$\mbox{]}}]{image\+Coord }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ad862cc3057d072216e0f3a7b4e9e295b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa7555cd0125d9d7e3c2d3eae519ce1b0}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_aa7555cd0125d9d7e3c2d3eae519ce1b0}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!get\+Tracking\+Result@{get\+Tracking\+Result}}
+\index{get\+Tracking\+Result@{get\+Tracking\+Result}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{get\+Tracking\+Result()}{getTrackingResult()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+get\+Tracking\+Result (\begin{DoxyParamCaption}\item[{float \mbox{[}$\,$\mbox{]}}]{result,  }\item[{int}]{trackable\+Id,  }\item[{int \mbox{[}$\,$\mbox{]}}]{process\+Time }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a289c720643c1f900f956f2589a619871}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a289c720643c1f900f956f2589a619871}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!get\+Transform\+Matrix44F@{get\+Transform\+Matrix44F}}
+\index{get\+Transform\+Matrix44F@{get\+Transform\+Matrix44F}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{get\+Transform\+Matrix44\+F()}{getTransformMatrix44F()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+get\+Transform\+Matrix44F (\begin{DoxyParamCaption}\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{float \mbox{[}$\,$\mbox{]}}]{transform\+Matrix33F,  }\item[{float \mbox{[}$\,$\mbox{]}}]{transform\+Matrix44F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af4e7ca30f3836348d7f5a2b375a25d28}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af4e7ca30f3836348d7f5a2b375a25d28}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!init\+Redering@{init\+Redering}}
+\index{init\+Redering@{init\+Redering}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{init\+Redering()}{initRedering()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+init\+Redering (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a52b3b148426377d86b7e3985ca4625fe}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a52b3b148426377d86b7e3985ca4625fe}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!remove\+Tracking\+Point@{remove\+Tracking\+Point}}
+\index{remove\+Tracking\+Point@{remove\+Tracking\+Point}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{remove\+Tracking\+Point()}{removeTrackingPoint()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+remove\+Tracking\+Point (\begin{DoxyParamCaption}\item[{int}]{trackable\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Remove tracking point
+
+
+\begin{DoxyParams}{Parameters}
+{\em trackable\+Id} & trackable\+Id container which is created by Vid\+Chaser engine \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Return result code 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a8a695391dde4caec8e85e5355769e202}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a8a695391dde4caec8e85e5355769e202}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!render\+Scene@{render\+Scene}}
+\index{render\+Scene@{render\+Scene}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{render\+Scene()}{renderScene()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+render\+Scene (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a80334a0ee1380fddc6a469facee88492}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a80334a0ee1380fddc6a469facee88492}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!save\+Camera\+Frame@{save\+Camera\+Frame}}
+\index{save\+Camera\+Frame@{save\+Camera\+Frame}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{save\+Camera\+Frame()}{saveCameraFrame()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+save\+Camera\+Frame (\begin{DoxyParamCaption}\item[{String}]{file\+Name,  }\item[{byte \mbox{[}$\,$\mbox{]}}]{data,  }\item[{int}]{length,  }\item[{int}]{width,  }\item[{int}]{height,  }\item[{int}]{stride,  }\item[{int}]{save\+Color\+Format }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af391e17e712749adbb5bfee2b762d941}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af391e17e712749adbb5bfee2b762d941}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!set\+New\+Frame@{set\+New\+Frame}}
+\index{set\+New\+Frame@{set\+New\+Frame}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{set\+New\+Frame()}{setNewFrame()}}
+{\footnotesize\ttfamily static int com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+set\+New\+Frame (\begin{DoxyParamCaption}\item[{byte \mbox{[}$\,$\mbox{]}}]{image\+Data,  }\item[{int}]{start\+Offset,  }\item[{int}]{length,  }\item[{int}]{image\+Width,  }\item[{int}]{image\+Height,  }\item[{int}]{stride,  }\item[{int}]{image\+Format,  }\item[{int}]{image\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Track frame working.
+
+
+\begin{DoxyParams}{Parameters}
+{\em image\+Data} & Image data array \\
+\hline
+{\em start\+Offset} & buffer start index \\
+\hline
+{\em image\+Width} & Camera frame width \\
+\hline
+{\em image\+Height} & Camera frame height \\
+\hline
+{\em stride} & buffer width \\
+\hline
+{\em image\+Format} & Image pixel format. 0 is R\+G\+B\+A32, 1 is R\+G\+B24, 2 is Y\+U\+V420sp \\
+\hline
+{\em image\+Index} & Set calculation method of result matrix. true is Affine transform, false is rigid transform. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Return result code 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89cea03eb38771648663da04950aaec5}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a89cea03eb38771648663da04950aaec5}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!set\+On\+New\+Camera\+Frame\+Callback@{set\+On\+New\+Camera\+Frame\+Callback}}
+\index{set\+On\+New\+Camera\+Frame\+Callback@{set\+On\+New\+Camera\+Frame\+Callback}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{set\+On\+New\+Camera\+Frame\+Callback()}{setOnNewCameraFrameCallback()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+set\+On\+New\+Camera\+Frame\+Callback (\begin{DoxyParamCaption}\item[{\hyperlink{interfacecom_1_1maxst_1_1vidchaser_1_1_on_new_camera_frame_callback}{On\+New\+Camera\+Frame\+Callback}}]{callback }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab4f43383db7d47da64c1c2b9ab8167ac}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_ab4f43383db7d47da64c1c2b9ab8167ac}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!start\+Camera@{start\+Camera}}
+\index{start\+Camera@{start\+Camera}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{start\+Camera()}{startCamera()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+start\+Camera (\begin{DoxyParamCaption}\item[{int}]{camera\+Id,  }\item[{int}]{width,  }\item[{int}]{height }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af7092d1f3dcca228cb6a45f263e35120}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_af7092d1f3dcca228cb6a45f263e35120}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!stop\+Camera@{stop\+Camera}}
+\index{stop\+Camera@{stop\+Camera}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{stop\+Camera()}{stopCamera()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+stop\+Camera (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a7883ba1837bd5c3f84ec45ca66414b05}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a7883ba1837bd5c3f84ec45ca66414b05}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!transpose\+Matrix33F@{transpose\+Matrix33F}}
+\index{transpose\+Matrix33F@{transpose\+Matrix33F}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{transpose\+Matrix33\+F()}{transposeMatrix33F()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+transpose\+Matrix33F (\begin{DoxyParamCaption}\item[{float \mbox{[}$\,$\mbox{]}}]{in,  }\item[{float \mbox{[}$\,$\mbox{]}}]{out }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a72fa4502f5dcc8d1e765167be9a05cae}\label{classcom_1_1maxst_1_1vidchaser_1_1_vid_chaser_a_p_i_a72fa4502f5dcc8d1e765167be9a05cae}} 
+\index{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}!update\+Rendering@{update\+Rendering}}
+\index{update\+Rendering@{update\+Rendering}!com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI@{com\+::maxst\+::vidchaser\+::\+Vid\+Chaser\+A\+PI}}
+\subsubsection{\texorpdfstring{update\+Rendering()}{updateRendering()}}
+{\footnotesize\ttfamily static void com.\+maxst.\+vidchaser.\+Vid\+Chaser\+A\+P\+I.\+update\+Rendering (\begin{DoxyParamCaption}\item[{int}]{width,  }\item[{int}]{height }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Workspace/\+Vid\+Chaser/\+Platform/\+Vid\+Chaser\+Android/\+Vid\+Chaser/src/main/java/com/maxst/vidchaser/\hyperlink{_vid_chaser_a_p_i_8java}{Vid\+Chaser\+A\+P\+I.\+java}\end{DoxyCompactItemize}

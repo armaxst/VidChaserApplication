@@ -204,6 +204,8 @@ public class ImageSaveActivity extends Activity {
 									System.arraycopy(sharedImageBuffer, 0, imageBufferForSave, 0, imageBufferLength);
 									imageCopyLock.unlock();
 								}
+
+								// Note : Save image with stride adding
 								VidChaserAPI.saveCameraFrame(fileName, imageBufferForSave, imageBufferLength, imageWidth, imageHeight, imageWidth + 50, imageSaveFormat);
 								runOnUiThread(new Runnable() {
 									@Override

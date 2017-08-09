@@ -10,10 +10,12 @@ import java.util.Arrays;
 class ImageReader {
 	private File fileList[];
 	private int currentIndex;
+	private int nextIndex;
 	private boolean isRewind = false;
 
 	ImageReader() {
 		currentIndex = 0;
+		nextIndex = 0;
 	}
 
 	boolean setPath(String path) {
@@ -24,19 +26,21 @@ class ImageReader {
 
 	boolean hasNext() {
 		if (isRewind) {
-			return (currentIndex >= 0);
+			return (nextIndex >= 0);
 		} else {
-			return (currentIndex < fileList.length);
+			return (nextIndex < fileList.length);
 		}
 	}
 
 	byte[] readFrame() {
+		currentIndex = nextIndex;
+
 		byte[] imageData = VidChaserUtil.readImageBytesFromFile(fileList[currentIndex].getAbsolutePath());
 
 		if (isRewind) {
-			currentIndex--;
+			nextIndex--;
 		} else {
-			currentIndex++;
+			nextIndex++;
 		}
 
 		return imageData;
@@ -52,6 +56,7 @@ class ImageReader {
 
 	void rewind() {
 		isRewind = true;
+		nextIndex -= 1;
 	}
 
 	void reset() {
@@ -60,5 +65,6 @@ class ImageReader {
 		}
 
 		currentIndex = 0;
+		nextIndex = 0;
 	}
 }

@@ -5,6 +5,7 @@
 package com.maxst.vidchaser.app;
 
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.maxst.vidchaser.ProjectionMatrix;
 import com.maxst.vidchaser.VidChaserAPI;
@@ -17,8 +18,10 @@ public class Trackable {
 	private int imageCoordX, imageCoordY;
 	private HashMap<Integer, float[]> transformRecord;
 	private int restartTrackingImageIndex;
+	private int lastIndex;
 	Sticker sticker;
 	private boolean trackingMode = false;
+	private boolean endTracking = false;
 	private float[] identityMatrix = new float[16];
 
 	public Trackable() {
@@ -35,15 +38,16 @@ public class Trackable {
 		this.restartTrackingImageIndex = imageIndexWhenTouch;
 
 		int[] tempTrackableId = new int[1];
-		int [] imageCoords = new int[2];
+		int[] imageCoords = new int[2];
 		VidChaserAPI.getImageCoordFromScreenCoord(screenX, screenY, imageCoords);
 		VidChaserAPI.addTrackingPoint(imageCoords[0], imageCoords[1], tempTrackableId, trackingMethod);
-		VidChaserAPI.activateTrackingPoint(imageCoordX, imageCoordY, tempTrackableId[0]);
 
 		this.imageCoordX = imageCoords[0];
 		this.imageCoordY = imageCoords[1];
 		this.trackableId = tempTrackableId[0];
+		this.lastIndex = lastIndex;
 		trackingMode = true;
+		endTracking = false;
 	}
 
 	public void draw(int currentImageIndex) {
@@ -52,27 +56,30 @@ public class Trackable {
 			return;
 		}
 
-		if (!trackingMode && currentImageIndex >= restartTrackingImageIndex) {
-			VidChaserAPI.activateTrackingPoint(imageCoordX, imageCoordY, trackableId);
-			trackingMode = true;
-		}
-
-		if (trackingMode) {
-			float[] resultTransform3x3 = new float[9];
-			float[] transposed = new float[9];
-			float[] glTransform4x4 = new float[16];
-			int[] processTime = new int[1];
-
-			int result = VidChaserAPI.getTrackingResult(resultTransform3x3, trackableId, processTime);
-			if (result == 0) {
-				VidChaserAPI.transposeMatrix33F(resultTransform3x3, transposed);
-				VidChaserAPI.getTransformMatrix44F(ProjectionMatrix.getInstance().getImageWidth(), ProjectionMatrix.getInstance().getImageHeight(),
-						transposed, glTransform4x4);
-				transformRecord.put(currentImageIndex, glTransform4x4);
+		if (!endTracking) {
+			if (!trackingMode && currentImageIndex >= restartTrackingImageIndex) {
+				VidChaserAPI.activateTrackingPoint(imageCoordX, imageCoordY, trackableId);
+				trackingMode = true;
 			}
 
-			if (restartTrackingImageIndex < currentImageIndex) {
-				restartTrackingImageIndex = currentImageIndex;
+			if(trackingMode) {
+				float[] resultTransform3x3 = new float[9];
+				float[] transposed = new float[9];
+				float[] glTransform4x4 = new float[16];
+				int[] processTime = new int[1];
+
+				int result = VidChaserAPI.getTrackingResult(resultTransform3x3, trackableId, processTime);
+
+				if (result == 0) {
+					VidChaserAPI.transposeMatrix33F(resultTransform3x3, transposed);
+					VidChaserAPI.getTransformMatrix44F(ProjectionMatrix.getInstance().getImageWidth(), ProjectionMatrix.getInstance().getImageHeight(),
+							transposed, glTransform4x4);
+					transformRecord.put(currentImageIndex, glTransform4x4);
+				}
+			}
+
+			if(currentImageIndex == lastIndex){
+				endTracking = true;
 			}
 		}
 

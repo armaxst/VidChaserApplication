@@ -286,21 +286,21 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 
 		@Override
 		public void onRenderCallback() {
+			int imageIndex = imageReader.getCurrentIndex();
+
+			arManager.drawSticker(imageIndex);
+
 			if (trackingReady) {
-				arManager.drawSticker(imageReader.getCurrentIndex());
 				return;
 			}
 
 			if (imageReader.hasNext()) {
-				int imageIndex = imageReader.getCurrentIndex();
-
 				byte[] fileBytes = imageReader.readFrame();
+				imageIndex = imageReader.getCurrentIndex();
 
 				VidChaserAPI.setNewFrame(fileBytes, 16, fileBytes.length - 16, imageWidth, imageHeight, imageStride, imageFormat, imageIndex);
 			} else {
 				arManager.deativateAllTrackingPoint();
-				Log.i(TAG, "Image index arrived last");
-				Log.i(TAG, "Image index is : " + imageReader.getCurrentIndex());
 				imageReader.reset();
 				runOnUiThread(new Runnable() {
 					@Override
@@ -310,7 +310,6 @@ public class ImageTrackerActivity extends AppCompatActivity implements View.OnTo
 				});
 			}
 
-			arManager.drawSticker(imageReader.getCurrentIndex());
 		}
 	};
 }

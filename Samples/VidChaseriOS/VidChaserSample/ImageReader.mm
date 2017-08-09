@@ -14,6 +14,7 @@
     NSString *fileFolderPath;
     NSArray *fileList;
     int currentIndex;
+    int nextIndex;
     bool isRewind;
 }
 @end
@@ -26,6 +27,7 @@
     if(self)
     {
         currentIndex = 0;
+        nextIndex = 0;
         isRewind = false;
     }
     return self;
@@ -41,29 +43,33 @@
 {
     if(isRewind)
     {
-        return (currentIndex >= 0);
+        return (nextIndex >= 0);
     }
     else
     {
-        return (currentIndex < fileList.count);
+        return (nextIndex < fileList.count);
     }
 }
 
 - (unsigned char *) readFrame:(bool)isStopped
 {
+    currentIndex = nextIndex;
+    
     NSString *fileFullPath = [NSString stringWithFormat:@"%@/%@", fileFolderPath, fileList[currentIndex]];
     NSData *imageFullData = [NSData dataWithContentsOfFile:fileFullPath];
     NSData *imageRawData = [imageFullData subdataWithRange:NSMakeRange(16, imageFullData.length - 16)];
     
+    [NSThread sleepForTimeInterval:0.066];
+    
     if(isRewind)
     {
-        currentIndex--;
+        nextIndex--;
     }
     else
     {
         if(isStopped == false)
         {
-            currentIndex++;
+            nextIndex++;
         }
     }
     
@@ -93,12 +99,13 @@
 
 - (int) getLastIndex
 {
-    return (int) fileList.count;
+    return (int) fileList.count - 1;
 }
 
 - (void) rewind
 {
     isRewind = true;
+    nextIndex -= 1;
 }
 
 - (void) reset
@@ -108,6 +115,7 @@
         isRewind = false;
     }
     currentIndex = 0;
+    nextIndex = 0;
 }
 
 @end

@@ -180,19 +180,24 @@
 {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    VidChaser::renderScene();
 
     self.indexText.text = [NSString stringWithFormat:@"%d / %d", [imageReader getCurrentIndex], [imageReader getLastIndex]];
+    
+    int imageIndex = [imageReader getCurrentIndex];
+    [arManager drawSticker:imageIndex];
+    
+    if(trackingReady)
+    {
+        return;
+    }
+    
     if([imageReader hasNext])
     {
-        glEnable(GL_DEPTH_TEST);
         unsigned char *imageBuffer = [imageReader readFrame: trackingReady];
-        
+        imageIndex = [imageReader getCurrentIndex];
         VidChaser::setNewFrame(imageBuffer, length, imageWidth, imageHeight, stride, (ColorFormat)colorFormat, [imageReader getCurrentIndex]);
-        VidChaser::renderScene();
-
-        glDisable(GL_DEPTH_TEST);
-        [arManager drawSticker:[imageReader getCurrentIndex]];
-        glEnable(GL_DEPTH_TEST);
     }
     else
     {

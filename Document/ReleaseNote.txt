@@ -1,3 +1,6 @@
+샘플앱 1.1
+    1. Android 에서 추적되는 스티커 좌표가 튀는 현상 수정. frame index 적용 오류
+
 2.4.20170727
     1. Android 수정 사항
         - init 메소드에서 입력 받는 값을 Activity 에서 Context 로 수정

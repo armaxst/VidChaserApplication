@@ -114,13 +114,7 @@ public class Sticker {
 	}
 
 	private void initGL() {
-		int vertexShader = ShaderUtil.loadShader(GLES20.GL_VERTEX_SHADER, VERTEX_SHADER_SRC);
-		int fragmentShader = ShaderUtil.loadShader(GLES20.GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SRC);
-
-		shaderProgramId = GLES20.glCreateProgram();
-		GLES20.glAttachShader(shaderProgramId, vertexShader);
-		GLES20.glAttachShader(shaderProgramId, fragmentShader);
-		GLES20.glLinkProgram(shaderProgramId);
+		shaderProgramId = ShaderUtil.createProgram(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
 
 		positionHandle = GLES20.glGetAttribLocation(shaderProgramId, "vertexPosition");
 		textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramId, "vertexTexCoord");

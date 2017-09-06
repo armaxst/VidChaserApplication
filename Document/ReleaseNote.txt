@@ -1,5 +1,16 @@
-샘플앱 1.1
+﻿[샘플앱]
+1.2
+    1. Android 에서 glReadPixels로 이미지 저장 후 동영상 재생하면서 스티커 증강하하는 기능으로 변경
+    2. index 가 맞지 않아 튀는 현상 수정
+
+1.1
     1. Android 에서 추적되는 스티커 좌표가 튀는 현상 수정. frame index 적용 오류
+
+[라이브러리]
+2.5.20170904
+    1. 엔진에 디버깅용 API getTrackingResultWithImage 추가.
+    2. 스티커를 붙힌 영역이 화면을 벗어날 때 좌표가 안쪽으로 밀리는 현상 수정
+    3. VidChaserAPI.renderScene 을 renderBackground로 이름 변경.
 
 2.4.20170727
     1. Android 수정 사항

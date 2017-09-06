@@ -19,11 +19,11 @@ class VidChaserUtil {
 
 	static final String ROOT_PATH = Environment.getExternalStorageDirectory() + "/VidChaser";
 	static final String IMAGE_PATH = ROOT_PATH + "/ImageSequences";
+	static final String TEST_VIDEO_FILE_NAME = "20170905_111519.mp4";
 
 	// region - Preference
 	static final String PREF_NAME = "VidChaser";
-	static final String PREF_KEY_CAM_RESOLUTION = "cam_resolution";
-	static final String PREF_KEY_IMAGE_FORMAT = "image_foramt";
+	static final String PREF_KEY_CAPTURE_SCALE = "capture_scale";
 	static final String PREF_KEY_TRACKING_METHOD = "tracking_method";
 
 	static final int TRACKING_METHOD_AFFINE = 0;

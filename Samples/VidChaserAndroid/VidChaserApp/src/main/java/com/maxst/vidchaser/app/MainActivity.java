@@ -29,17 +29,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		ButterKnife.unbind(this);
 	}
 
-	@OnClick({R.id.save_image, R.id.track_image, R.id.settings})
+	@OnClick({R.id.capture_video, R.id.play_captured, R.id.track_image, R.id.track_video, R.id.settings})
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.save_image: {
-				Intent intent = new Intent(MainActivity.this, ImageSaveActivity.class);
+			case R.id.capture_video: {
+				Intent intent = new Intent(MainActivity.this, VideoCaptureActivity.class);
+				startActivity(intent);
+			}
+			break;
+
+			case R.id.play_captured: {
+				Intent intent = new Intent(MainActivity.this, PlayCapturedActivity.class);
 				startActivity(intent);
 			}
 			break;
 
 			case R.id.track_image: {
-				Intent intent = new Intent(MainActivity.this, ImageTrackerActivity.class);
+				Intent intent = new Intent(MainActivity.this, TrackImageActivity.class);
+				startActivity(intent);
+			}
+			break;
+
+			case R.id.track_video: {
+				Intent intent = new Intent(MainActivity.this, TrackVideoActivity.class);
 				startActivity(intent);
 			}
 			break;
@@ -51,8 +63,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			break;
 		}
 	}
-//
-//	static {
-//		System.loadLibrary("VidChaserApp");
-//	}
 }

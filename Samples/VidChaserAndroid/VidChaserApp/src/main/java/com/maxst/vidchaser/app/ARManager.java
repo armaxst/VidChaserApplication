@@ -23,6 +23,12 @@ public class ARManager {
 		}
 	}
 
+	public void updateTransform(int imageIndex) {
+		for (Trackable trackable : trackableArrayList) {
+			trackable.updateTransform(imageIndex);
+		}
+	}
+
 	public void drawSticker(int imageIndex) {
 		for (Trackable trackable : trackableArrayList) {
 			trackable.draw(imageIndex);

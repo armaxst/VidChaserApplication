@@ -16,23 +16,11 @@ import butterknife.OnClick;
 
 public class SettingsActivity extends Activity {
 
-	@Bind(R.id.sd_resolution)
-	RadioButton sdResolution;
-
-	@Bind(R.id.hd_resolution)
-	RadioButton hdResolution;
-
-	@Bind(R.id.full_hd_resolution)
-	RadioButton fullHdResolution;
-
-	@Bind(R.id.image_yuv)
-	RadioButton imageFormatYUV;
-
-	@Bind(R.id.image_rgb888)
-	RadioButton imageFormatRGB888;
-
-	@Bind(R.id.image_rgba8888)
-	RadioButton imageFormatRGBA8888;
+//	@Bind(R.id.divide_2)
+//	RadioButton divide2;
+//
+//	@Bind(R.id.divide_4)
+//	RadioButton divide4;
 
 	@Bind(R.id.tracking_affine)
 	RadioButton trackingAffine;
@@ -53,35 +41,16 @@ public class SettingsActivity extends Activity {
 
 		ButterKnife.bind(this);
 
-		int resolution = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).getInt(VidChaserUtil.PREF_KEY_CAM_RESOLUTION, 0);
-		switch (resolution) {
-			case 0:
-				sdResolution.setChecked(true);
-				break;
-
-			case 1:
-				hdResolution.setChecked(true);
-				break;
-
-			case 2:
-				fullHdResolution.setChecked(true);
-				break;
-		}
-
-		int imageSaveFormat = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).getInt(VidChaserUtil.PREF_KEY_IMAGE_FORMAT, 0);
-		switch (imageSaveFormat) {
-			case 0:
-				imageFormatRGBA8888.setChecked(true);
-				break;
-
-			case 1:
-				imageFormatRGB888.setChecked(true);
-				break;
-
-			case 2:
-				imageFormatYUV.setChecked(true);
-				break;
-		}
+//		int captureScale = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).getInt(VidChaserUtil.PREF_KEY_CAPTURE_SCALE, 0);
+//		switch (captureScale) {
+//			case 0:
+//				divide2.setChecked(true);
+//				break;
+//
+//			case 1:
+//				divide4.setChecked(true);
+//				break;
+//		}
 
 		int trackingMethod = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).
 				getInt(VidChaserUtil.PREF_KEY_TRACKING_METHOD, VidChaserUtil.TRACKING_METHOD_RIGID);
@@ -111,51 +80,22 @@ public class SettingsActivity extends Activity {
 		ButterKnife.unbind(this);
 	}
 
-	@OnClick({R.id.sd_resolution, R.id.hd_resolution, R.id.full_hd_resolution})
-	public void onResolutionClick(View view) {
-		switch (view.getId()) {
-			case R.id.sd_resolution:
-				SharedPreferences.Editor editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_CAM_RESOLUTION, 0);
-				editor.apply();
-				break;
-
-			case R.id.hd_resolution:
-				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_CAM_RESOLUTION, 1);
-				editor.apply();
-				break;
-
-			case R.id.full_hd_resolution:
-				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_CAM_RESOLUTION, 2);
-				editor.apply();
-				break;
-		}
-	}
-
-	@OnClick({R.id.image_yuv, R.id.image_rgb888, R.id.image_rgba8888})
-	public void onImageFormatClick(View view) {
-		switch (view.getId()) {
-			case R.id.image_rgba8888:
-				SharedPreferences.Editor editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_IMAGE_FORMAT, 0);
-				editor.apply();
-				break;
-
-			case R.id.image_rgb888:
-				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_IMAGE_FORMAT, 1);
-				editor.apply();
-				break;
-
-			case R.id.image_yuv:
-				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
-				editor.putInt(VidChaserUtil.PREF_KEY_IMAGE_FORMAT, 2);
-				editor.apply();
-				break;
-		}
-	}
+//	@OnClick({R.id.divide_2, R.id.divide_4})
+//	public void onScaleClick(View view) {
+//		switch (view.getId()) {
+//			case R.id.divide_2:
+//				SharedPreferences.Editor editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+//				editor.putInt(VidChaserUtil.PREF_KEY_CAPTURE_SCALE, 0);
+//				editor.apply();
+//				break;
+//
+//			case R.id.divide_4:
+//				editor = getSharedPreferences(VidChaserUtil.PREF_NAME , Activity.MODE_PRIVATE).edit();
+//				editor.putInt(VidChaserUtil.PREF_KEY_CAPTURE_SCALE, 1);
+//				editor.apply();
+//				break;
+//		}
+//	}
 
 	@OnClick({R.id.tracking_affine, R.id.tracking_homography, R.id.tracking_rigid, R.id.tracking_translation})
 	public void onTrackingMethodClick(View view) {

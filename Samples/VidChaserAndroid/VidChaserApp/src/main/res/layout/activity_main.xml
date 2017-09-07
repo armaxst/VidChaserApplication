@@ -19,39 +19,45 @@
 
 		<LinearLayout
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
 
 			<Button
 				android:id="@+id/capture_video"
 				android:layout_width="150dp"
-				android:layout_height="80dp"
+				android:layout_height="100dp"
 				android:text="Capture video"/>
 
 			<Button
 				android:id="@+id/play_captured"
 				android:layout_width="150dp"
-				android:layout_height="80dp"
-				android:layout_marginLeft="20dp"
+				android:layout_height="100dp"
 				android:text="Play captured"/>
 		</LinearLayout>
 
 		<LinearLayout
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical">
 
 			<Button
 				android:id="@+id/track_image"
 				android:layout_width="150dp"
-				android:layout_height="80dp"
+				android:layout_height="100dp"
 				android:text="Track Image"/>
 
 			<Button
 				android:id="@+id/track_video"
 				android:layout_width="150dp"
-				android:layout_height="80dp"
-				android:layout_marginLeft="20dp"
+				android:layout_height="100dp"
 				android:text="Track Video"/>
+
+			<Button
+				android:id="@+id/track_video_async"
+				android:layout_width="150dp"
+				android:layout_height="100dp"
+				android:text="Track Video Async"/>
 		</LinearLayout>
 	</LinearLayout>
 

@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class Sticker {
+public class DebugQuad {
 
 	private static final int QUAD_IDX_BUFF_LENGTH = 6;
 
@@ -35,7 +35,8 @@ public class Sticker {
 
 					"void main(void)\n" +
 					"{\n" +
-					"	gl_FragColor = texture2D(s_texture_1, texCoord);\n" +
+					"	float y = texture2D(s_texture_1, texCoord).r;\n"	+
+					"	gl_FragColor = vec4(y, y, y, 1.0);\n" +
 					"}\n";
 
 
@@ -63,18 +64,12 @@ public class Sticker {
 	private ByteBuffer indexBuffer;
 	private FloatBuffer textureCoordBuff;
 
-	private Bitmap textureBitmap;
-
 	private int shaderProgramId = 0;
 	private int positionHandle;
 	private int textureCoordHandle;
 	private int mvpMatrixHandle;
 	private int textureHandle;
 	private int[] textureNames;
-	private int minX = 0;
-	private int minY = 0;
-	private int maxX = 0;
-	private int maxY = 0;
 
 	private float[] localMvpMatrix = new float[16];
 	private float [] projectionMatrix = new float[16];
@@ -83,7 +78,7 @@ public class Sticker {
 	private float[] scale = new float[16];
 	private float[] rotation = new float[16];
 
-	public Sticker() {
+	public DebugQuad() {
 		textureNames = new int[1];
 		ByteBuffer bb = ByteBuffer.allocateDirect(VERTEX_BUF.length * 4);
 		bb.order(ByteOrder.nativeOrder());
@@ -129,56 +124,18 @@ public class Sticker {
 		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
 		textureHandle = GLES20.glGetUniformLocation(shaderProgramId, "s_texture_1");
-
-		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
 	}
 
-	public void setTexture(Bitmap bitmap) {
-		this.textureBitmap = bitmap;
-	}
-
-	public void draw(float[] transform) {
+	public void draw(byte [] textureData, int width, int height) {
 		if (!initDone) {
 			initGL();
 			initDone = true;
 		}
 
-		GLES20.glUseProgram(shaderProgramId);
+		ByteBuffer bb = ByteBuffer.wrap(textureData);
+		GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, width, height, 0, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, bb);
 
-		GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false,
-				0, vertexBuffer);
-		GLES20.glEnableVertexAttribArray(positionHandle);
-
-		GLES20.glVertexAttribPointer(textureCoordHandle, 2, GLES20.GL_FLOAT, false,
-				0, textureCoordBuff);
-		GLES20.glEnableVertexAttribArray(textureCoordHandle);
-
-		Matrix.multiplyMM(modelMatrix, 0, scale, 0, rotation, 0);
-		Matrix.multiplyMM(modelMatrix, 0, translation, 0, modelMatrix, 0);
-		Matrix.multiplyMM(modelMatrix, 0, transform, 0, modelMatrix, 0);
-
-		minX = (int) (modelMatrix[12] - scale[0] / 2);
-		maxX = (int) (modelMatrix[12] + scale[0] / 2);
-		minY = (int) (modelMatrix[13] - scale[0] / 2);
-		maxY = (int) (modelMatrix[13] + scale[0] / 2);
-
-		Matrix.multiplyMM(localMvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-		GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, localMvpMatrix, 0);
-
-		GLES20.glEnable(GLES20.GL_BLEND);
-		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glUniform1i(textureHandle, 0);
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureNames[0]);
-
-		GLES20.glDrawElements(GLES20.GL_TRIANGLES, QUAD_IDX_BUFF_LENGTH,
-				GLES20.GL_UNSIGNED_BYTE, indexBuffer);
-
-		GLES20.glDisableVertexAttribArray(positionHandle);
-		GLES20.glDisableVertexAttribArray(textureCoordHandle);
-
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+		draw();
 	}
 
 	public void draw() {
@@ -194,9 +151,6 @@ public class Sticker {
 
 		Matrix.multiplyMM(localMvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
 		GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, localMvpMatrix, 0);
-
-		GLES20.glEnable(GLES20.GL_BLEND);
-		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
 		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 		GLES20.glUniform1i(textureHandle, 0);
@@ -228,9 +182,5 @@ public class Sticker {
 	public void setRotation(float angle, float x, float y, float z) {
 		Matrix.setIdentityM(rotation, 0);
 		Matrix.rotateM(rotation, 0, angle, x, y, z);
-	}
-
-	public boolean isTouched(int touchX, int touchY) {
-		return (touchX >= minX && touchX <= maxX && touchY >= minY && touchY <= maxY);
 	}
 }

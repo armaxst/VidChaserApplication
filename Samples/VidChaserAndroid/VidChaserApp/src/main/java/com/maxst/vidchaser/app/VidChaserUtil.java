@@ -52,4 +52,11 @@ class VidChaserUtil {
 		}
 		return bytes;
 	}
+
+	enum TrackingState {
+		None,
+		ReadyToTracking,
+		Tracking,
+		PlayAfterTracking
+	}
 }

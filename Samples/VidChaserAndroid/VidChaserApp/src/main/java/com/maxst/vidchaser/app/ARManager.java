@@ -35,6 +35,12 @@ public class ARManager {
 		}
 	}
 
+	public void drawSticker() {
+		for (Trackable trackable : trackableArrayList) {
+			trackable.draw();
+		}
+	}
+
 	public void stopTracking(Sticker sticker) {
 		for (Trackable trackable : trackableArrayList) {
 			if (trackable.sticker == sticker) {

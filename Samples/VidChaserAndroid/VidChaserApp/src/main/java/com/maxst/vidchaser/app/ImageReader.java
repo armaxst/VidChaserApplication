@@ -74,9 +74,17 @@ class ImageReader {
 	int findNearestIndexByPosition(int seekPosition) {
 		for (int i = 0; i < fileInfoList.size() - 1; i++) {
 			if (seekPosition > fileInfoList.get(i).getSeekPosition() && seekPosition <= fileInfoList.get(i + 1).getSeekPosition()) {
-				return fileInfoList.get(i + 1).getIndex();
+				FileInfo info = fileInfoList.get(i + 1);
+				return info.getIndex();
 			}
 		}
+//
+//		for (int i = 1; i < fileInfoList.size(); i++) {
+//			if (seekPosition > fileInfoList.get(i - 1).getSeekPosition() && seekPosition <= fileInfoList.get(i).getSeekPosition()) {
+//				FileInfo info = fileInfoList.get(i);
+//				return info.getIndex();
+//			}
+//		}
 
 		return -1;
 	}

@@ -7,6 +7,7 @@ package com.maxst.vidchaser.app;
 import android.app.Activity;
 import android.app.Dialog;
 import android.opengl.GLSurfaceView;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -22,6 +23,7 @@ import com.maxst.vidchaser.VidChaserAPI;
 import com.maxst.videoplayer.VideoPlayer;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -30,9 +32,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TrackVideoActivity extends AppCompatActivity implements View.OnTouchListener {
+public class TrackVideoAsyncActivity extends AppCompatActivity implements View.OnTouchListener {
 
-	private static final String TAG = TrackVideoActivity.class.getName();
+	private static final String TAG = TrackVideoAsyncActivity.class.getName();
 
 	@Bind(R.id.image_size)
 	TextView imageSizeTextView;
@@ -258,6 +260,7 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 							imageReader.getLastIndex(), (int)event.getX(), (int)event.getY(), trackingMethod);
 
 					trackingState = VidChaserUtil.TrackingState.Tracking;
+					new TrackImageTask(this).execute();
 
 					glSurfaceView.queueEvent(new Runnable() {
 						@Override
@@ -271,6 +274,18 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 				}
 		}
 		return true;
+	}
+
+	void trackImageCompleted() {
+		progressDialog.dismiss();
+		glSurfaceView.queueEvent(new Runnable() {
+			@Override
+			public void run() {
+				trackingState = VidChaserUtil.TrackingState.PlayAfterTracking;
+				videoPlayer.start();
+				videoPlayer.setPosition(0);
+			}
+		});
 	}
 
 	private StickerContainer.OnStickerSelectedListener stickerSelectedListener = new StickerContainer.OnStickerSelectedListener() {
@@ -299,18 +314,16 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 		}
 	};
 
+	private int imageIndex = 0;
+
 	private TrackVideoRenderer.RenderCallback renderCallback = new TrackVideoRenderer.RenderCallback() {
 
 		@Override
 		public void onRender(int position) {
 
-			int imageIndex = 0;
-
 			if (trackingState == VidChaserUtil.TrackingState.None || trackingState == VidChaserUtil.TrackingState.PlayAfterTracking) {
 				imageIndex = imageReader.findNearestIndexByPosition(position);
 				imageReader.setCurrentIndex(imageIndex);
-			} else if (trackingState == VidChaserUtil.TrackingState.Tracking) {
-				imageIndex = imageReader.getCurrentIndex();
 			}
 
 			if (imageIndex < 0) {
@@ -329,13 +342,21 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 			}
 
 			if (trackingState == VidChaserUtil.TrackingState.Tracking) {
-				byte[] fileBytes = imageReader.readFrame();
-				VidChaserAPI.setNewFrame(fileBytes, 16, fileBytes.length - 16, imageWidth, imageHeight, imageStride, imageFormat, imageIndex);
-				VidChaserAPI.renderBackground();
+				arManager.drawSticker();
 			}
 
-			arManager.updateTransform(imageIndex);
-			arManager.drawSticker(imageIndex);
+			if (trackingState != VidChaserUtil.TrackingState.Tracking) {
+				arManager.updateTransform(imageIndex);
+				arManager.drawSticker(imageIndex);
+
+				final int finalImageIndex = imageIndex;
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						playInfo.setText(String.format(Locale.UK, "Play image : %d / %d", finalImageIndex, imageReader.getLastIndex() + 1));
+					}
+				});
+			}
 
 			// region -- For debugging
 			if (trackingState == VidChaserUtil.TrackingState.Tracking) {
@@ -359,35 +380,6 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 				}
 			}
 			// endregion -- For debugging
-
-			if (trackingState == VidChaserUtil.TrackingState.Tracking) {
-				imageReader.updateIndex();
-				if (!imageReader.hasNext()) {
-					arManager.deativateAllTrackingPoint();
-					imageReader.reset();
-				}
-
-				if (imageIndex >= imageReader.getLastIndex()) {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							progressDialog.dismiss();
-						}
-					});
-
-					trackingState = VidChaserUtil.TrackingState.PlayAfterTracking;
-					videoPlayer.start();
-					videoPlayer.setPosition(0);
-				}
-			}
-
-			final int finalImageIndex = imageIndex;
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					playInfo.setText(String.format(Locale.UK, "Play image : %d / %d", finalImageIndex, imageReader.getLastIndex() + 1));
-				}
-			});
 		}
 	};
 
@@ -396,4 +388,59 @@ public class TrackVideoActivity extends AppCompatActivity implements View.OnTouc
 		public void onComplete() {
 		}
 	};
+
+	private static class TrackImageTask extends AsyncTask<Void, Integer, Void> {
+
+		private WeakReference<TrackVideoAsyncActivity> trackVideoActivityWeakReference;
+
+		TrackImageTask(TrackVideoAsyncActivity activity) {
+			trackVideoActivityWeakReference = new WeakReference<>(activity);
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			TrackVideoAsyncActivity activity = trackVideoActivityWeakReference.get();
+			ImageReader imageReader;
+			if (activity != null) {
+				while(true) {
+					imageReader = activity.imageReader;
+					int imageIndex = imageReader.getCurrentIndex();
+					byte[] fileBytes = imageReader.readFrame();
+					VidChaserAPI.setNewFrame(fileBytes, 16, fileBytes.length - 16,
+							activity.imageWidth, activity.imageHeight, activity.imageStride, activity.imageFormat, imageIndex);
+
+					activity.arManager.updateTransform(imageIndex);
+
+					imageReader.updateIndex();
+					if (!imageReader.hasNext()) {
+						activity.arManager.deativateAllTrackingPoint();
+						imageReader.reset();
+					}
+
+					if (imageIndex >= imageReader.getLastIndex()) {
+						break;
+					}
+
+					publishProgress(imageIndex);
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			TrackVideoAsyncActivity activity = trackVideoActivityWeakReference.get();
+			if (activity != null) {
+				activity.playInfo.setText(String.format(Locale.UK, "Play image : %d / %d", values[0], activity.imageReader.getLastIndex() + 1));
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			TrackVideoAsyncActivity activity = trackVideoActivityWeakReference.get();
+			if (activity != null) {
+				activity.trackImageCompleted();
+			}
+		}
+	}
 }

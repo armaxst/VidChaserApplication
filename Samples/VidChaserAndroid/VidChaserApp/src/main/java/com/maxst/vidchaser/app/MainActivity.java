@@ -29,7 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		ButterKnife.unbind(this);
 	}
 
-	@OnClick({R.id.capture_video, R.id.play_captured, R.id.track_image, R.id.track_video, R.id.settings})
+	@OnClick({R.id.capture_video, R.id.play_captured, R.id.track_image, R.id.track_video, R.id.track_video_async, R.id.settings})
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.capture_video: {
@@ -52,6 +52,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 			case R.id.track_video: {
 				Intent intent = new Intent(MainActivity.this, TrackVideoActivity.class);
+				startActivity(intent);
+			}
+			break;
+
+			case R.id.track_video_async: {
+				Intent intent = new Intent(MainActivity.this, TrackVideoAsyncActivity.class);
 				startActivity(intent);
 			}
 			break;

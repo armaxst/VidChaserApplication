@@ -105,6 +105,10 @@ public class Trackable {
 		sticker.draw(transform);
 	}
 
+	public void draw() {
+		sticker.draw();
+	}
+
 	public void stop() {
 		VidChaserAPI.removeTrackingPoint(trackableId);
 		trackableId = -1;
